@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1045507805843",
+    "project_id": "lingvo-friend",
+    "storage_bucket": "lingvo-friend.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1045507805843:android:a130807905a7ec9cdc3366",
+        "android_client_info": {
+          "package_name": "com.example.lingvofriend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzBNnjbh9nkopo2_rCJ4ar0pL1gjKCPVQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
