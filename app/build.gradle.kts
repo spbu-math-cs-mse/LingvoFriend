@@ -41,20 +41,12 @@ android {
 }
 
 dependencies {
-    // Import the BoM for the Firebase platform
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.9.1")
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
-
-    // Add the dependency for the Firebase Authentication library
-    // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation("com.google.firebase:firebase-auth")
-
-
-    //implementation("androidx.compose.ui:ui:1.5.1")
-    //implementation ("androidx.compose.material3:material3:1.1.0")
-    //implementation ("androidx.compose.ui:ui-tooling-preview:1.5.1")
-    //implementation ("androidx.compose.foundation:foundation:1.5.1")
     implementation("androidx.navigation:navigation-compose:2.8.3")
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
