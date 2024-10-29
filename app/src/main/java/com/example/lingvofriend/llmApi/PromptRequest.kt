@@ -1,5 +1,7 @@
 package com.example.lingvofriend.llmApi
 
+// based on YaGpt request JSON example
+
 data class PromptRequest(
     val modelUri: String,
     val completionOptions: CompletionOptions,

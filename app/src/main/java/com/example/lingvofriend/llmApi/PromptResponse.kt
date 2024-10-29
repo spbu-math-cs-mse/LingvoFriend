@@ -1,5 +1,7 @@
 package com.example.lingvofriend.llmApi
 
+// based on YaGpt response JSON example
+
 data class PromptResponse(
     val result: PromptResult,
 )

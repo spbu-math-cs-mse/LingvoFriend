@@ -11,6 +11,7 @@ import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
 
+// form for http request
 interface ApiService {
     @Headers("Content-Type: application/json")
     @POST("completion")
@@ -21,10 +22,14 @@ interface ApiService {
     ): Call<PromptResponse>
 }
 
+// function to build client and send request async
 suspend fun buildClient(chatMessages: List<Message>): String =
     withContext(Dispatchers.IO) {
         try {
+            // initializing OkHttpClient
             val client = OkHttpClient.Builder().build()
+
+            // initializing retrofit
             val retrofit =
                 Retrofit
                     .Builder()
@@ -33,11 +38,13 @@ suspend fun buildClient(chatMessages: List<Message>): String =
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
 
+            // setting up a request
             val apiService = retrofit.create(ApiService::class.java)
 
             val apiKey = "Api-Key AQVN07OQURQ4oCSX6VeG_8-cKQXOibWdO0dpClQx"
             val folderId = "b1gq1u711tpqm1mskqc5"
 
+            // forming a PromptRequest
             val prompt =
                 PromptRequest(
                     modelUri = "gpt://b1gq1u711tpqm1mskqc5/yandexgpt-lite",
@@ -50,7 +57,10 @@ suspend fun buildClient(chatMessages: List<Message>): String =
                     messages = chatMessages,
                 )
 
+            // sending request
             val response = apiService.sendPrompt(apiKey, folderId, prompt).execute()
+
+            // forming a response
             if (response.isSuccessful) {
                 response
                     .body()
