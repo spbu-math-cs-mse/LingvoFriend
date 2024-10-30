@@ -2,14 +2,12 @@ package com.example.lingvofriend.pages
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -33,6 +31,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -74,6 +73,7 @@ fun HomePage(
     val authState = authViewModel.authState.observeAsState()
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+
     val focusManager = LocalFocusManager.current
 
     // if AuthState changes to Unauthenticated we'll leave from HomePage
@@ -100,9 +100,12 @@ fun HomePage(
     Column(
         modifier =
             modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-                .imePadding(),
+                // when we click on nothing it hides the keyboard
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = {
+                        focusManager.clearFocus()
+                    })
+                },
     ) {
         LazyColumn(
             modifier =
@@ -133,7 +136,9 @@ fun HomePage(
 
         OutlinedTextField(
             value = userMessage,
-            onValueChange = { userMessage = it.capitalize() }, // capitalizes the user's string on input
+            onValueChange = {
+                userMessage = it.capitalize()
+            }, // capitalizes the user's string on input
             placeholder = { Text("Message") },
             modifier =
                 Modifier
