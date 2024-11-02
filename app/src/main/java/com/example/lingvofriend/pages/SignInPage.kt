@@ -1,10 +1,10 @@
 package com.example.lingvofriend.pages
 
 import android.widget.Toast
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -21,7 +21,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -45,6 +47,8 @@ fun SignInPage(
     val authState = authViewModel.authState.observeAsState()
     val context = LocalContext.current
 
+    val focusManager = LocalFocusManager.current
+
     // when our AuthState is gonna change the code below will be executed
     LaunchedEffect(authState.value) {
         when (authState.value) {
@@ -64,7 +68,14 @@ fun SignInPage(
     }
 
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier =
+            modifier
+                // when we click on nothing it hides the keyboard
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = {
+                        focusManager.clearFocus()
+                    })
+                },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -75,7 +86,7 @@ fun SignInPage(
         OutlinedTextField(
             value = email,
             onValueChange = {
-                email = it
+                email = it.trim()
             },
             label = {
                 Text(text = "Email")
