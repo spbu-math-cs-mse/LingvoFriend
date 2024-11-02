@@ -20,9 +20,10 @@ dependencies {
     testImplementation(libs.junit)
 
     // This dependency is used by the application.
-    implementation("org.telegram:telegrambots:6.0.1")
+    implementation("org.telegram:telegrambots:6.9.7.1")
     implementation("org.apache.logging.log4j:log4j-api:2.24.1")
     runtimeOnly("org.apache.logging.log4j:log4j-core:2.24.1")
+    runtimeOnly("org.apache.logging.log4j:log4j-slf4j2-impl:2.24.1")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -34,5 +35,5 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "ru.lingvofriend.tgbot.App"
+    mainClass = "ru.lingvofriend.tgbot.Bot"
 }
