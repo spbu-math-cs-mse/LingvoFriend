@@ -1,6 +1,10 @@
 package ru.lingvofriend.tgbot.questionnaire;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import ru.lingvofriend.tgbot.Bot;
@@ -14,10 +18,8 @@ public class QuestionnaireHandler {
 
     // Define interests
     private static final List<String> INTERESTS = Arrays.asList(
-        "Technology", "Sports", "Music", "Travel", "Art",
-        "Science", "Literature", "Gaming", "Health", "Education",
-        "Finance", "Cooking", "Photography", "Movies", "Fitness",
-        "History", "Nature", "Politics", "Business", "Fashion"
+        "Книги", "Музыка", "Путешествия", "Искусство", "Спорт",
+        "Игры", "Кулинария", "Технологии", "Стиль и мода", "Наука"
     );
 
     public QuestionnaireHandler(Map<Long, UserState> userStates,
@@ -31,11 +33,11 @@ public class QuestionnaireHandler {
     public void startQuestionnaire(Long chatId) {
         userStates.put(chatId, UserState.ASK_NAME);
         userResponses.put(chatId, new UserResponse());
-        sendMessage(chatId, "Welcome to LingvoFriend Bot! Let's get to know you better.\n\n" +
-                "What is your name?");
+        sendMessage(chatId, "Добро пожаловать в Lingvo Friend! Давай познакомимся получше:\n\n" +
+                "Как тебя зовут?");
     }
 
-    public Boolean handleResponse(Long chatId, String text) {
+    public void handleResponse(Long chatId, String text) {
         UserState state = userStates.getOrDefault(chatId, UserState.START);
         UserResponse response = userResponses.get(chatId);
 
@@ -43,42 +45,73 @@ public class QuestionnaireHandler {
             case ASK_NAME:
                 response.setName(text);
                 userStates.put(chatId, UserState.ASK_GENDER);
-                sendMessage(chatId, "Great, " + text + "! What is your preferred pronoun?\n\n" +
-                        "1. He/Him\n2. She/Her\n3. They/Them\n\nPlease reply with the number corresponding to your choice.");
-                return false;
+
+                SendMessage message = new SendMessage();
+                message.setChatId(chatId);
+                message.setText( "Отлично! Теперь определимся с полом:\n\n" +
+                "1. Мужчина\n" + "2. Женщина\n\n" + "Введи 1 или 2");
+                ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+                List<KeyboardRow> keyboard = new ArrayList<>();
+                KeyboardRow row = new KeyboardRow();
+                row.add(new KeyboardButton("1"));
+                row.add(new KeyboardButton("2"));
+                keyboard.add(row);
+                keyboardMarkup.setKeyboard(keyboard);
+                message.setReplyMarkup(keyboardMarkup);
+                try {
+                    bot.execute(message);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+                return;
 
             case ASK_GENDER:
                 handleGender(chatId, text);
-                return false;
+                return;
 
             case ASK_AGE:
                 handleAge(chatId, text);
-                return false;
+                return;
 
             case ASK_GOALS:
                 response.setGoals(text);
                 userStates.put(chatId, UserState.ASK_ENGLISH_EXPERIENCE);
-                sendMessage(chatId, "Do you have any previous experience learning English?\n\n" +
-                        "Please reply with Yes or No.");
-                return false;
+
+                SendMessage message1 = new SendMessage();
+                message1.setChatId(chatId);
+                message1.setText( "Вы изучали английский до этого?\n\n");
+                ReplyKeyboardMarkup keyboardMarkup1 = new ReplyKeyboardMarkup();
+                List<KeyboardRow> keyboard1 = new ArrayList<>();
+                KeyboardRow row1 = new KeyboardRow();
+                row1.add(new KeyboardButton("Да"));
+                row1.add(new KeyboardButton("Нет"));
+                keyboard1.add(row1);
+                keyboardMarkup1.setKeyboard(keyboard1);
+                message1.setReplyMarkup(keyboardMarkup1);
+                try {
+                    bot.execute(message1);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+                return;
 
             case ASK_ENGLISH_EXPERIENCE:
                 response.setEnglishExperience(text);
                 userStates.put(chatId, UserState.ASK_INTERESTS);
                 sendInterestsOptions(chatId);
-                return false;
+                return;
 
             case ASK_INTERESTS:
                 handleInterests(chatId, text);
-                return true;
+                return;
 
             case COMPLETED:
-                sendMessage(chatId, "You have already completed the questionnaire. Thank you!");
-                return true;
+                sendMessage(chatId, "Ты закончи проходить опрос! Спасибо!");
+                return;
 
             default:
-                sendMessage(chatId, "Please start the questionnaire by sending /start.");
-                return false;
+                sendMessage(chatId, "Для начала опроса напиши /start.");
+                return;
         }
     }
 
@@ -92,11 +125,21 @@ public class QuestionnaireHandler {
                 response.setPronoun("She/Her");
                 break;
             default:
-                sendMessage(chatId, "Invalid option. Please choose 1, 2, or 3.");
+                sendMessage(chatId, "Введи 1 или 2");
                 return;
         }
         userStates.put(chatId, UserState.ASK_AGE);
-        sendMessage(chatId, "How old are you?");
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        ReplyKeyboardRemove keyboardRemove = new ReplyKeyboardRemove();
+        keyboardRemove.setRemoveKeyboard(true);
+        message.setReplyMarkup(keyboardRemove);
+        message.setText("Сколько тебе лет?");
+        try {
+            bot.execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 
     private void handleAge(Long chatId, String text) {
@@ -105,9 +148,9 @@ public class QuestionnaireHandler {
             UserResponse response = userResponses.get(chatId);
             response.setAge(age); 
             userStates.put(chatId, UserState.ASK_GOALS);
-            sendMessage(chatId, "What are your goals for learning English?");
+            sendMessage(chatId, "Какие твои цели в изучении английского?");
         } catch (NumberFormatException e) {
-            sendMessage(chatId, "Please enter a valid age number.");
+            sendMessage(chatId, "Введите число");
         }
     }
 
@@ -127,22 +170,32 @@ public class QuestionnaireHandler {
         }
 
         if (selectedInterests.isEmpty()) {
-            sendMessage(chatId, "No valid interests selected. Please choose at least one interest by sending the numbers separated by commas.");
+            sendMessage(chatId, "Следуйте инструкциям по вводу");
             return;
         }
 
         UserResponse response = userResponses.get(chatId);
         response.setInterests(selectedInterests);
         userStates.put(chatId, UserState.COMPLETED);
-        sendMessage(chatId, "Thank you for completing the questionnaire!");
+        sendMessage(chatId, "Спасибо за заполение анкеты!");
     }
 
     private void sendInterestsOptions(Long chatId) {
-        StringBuilder sb = new StringBuilder("Please select your interests by sending the numbers separated by commas (e.g., 1,3,5):\n");
+        StringBuilder sb = new StringBuilder("Выбери интересующие тебя темы (введи числа через запятую):\n");
         for (int i = 0; i < INTERESTS.size(); i++) {
             sb.append((i + 1)).append(". ").append(INTERESTS.get(i)).append("\n");
         }
-        sendMessage(chatId, sb.toString());
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        ReplyKeyboardRemove keyboardRemove = new ReplyKeyboardRemove();
+        keyboardRemove.setRemoveKeyboard(true);
+        message.setReplyMarkup(keyboardRemove);
+        message.setText(sb.toString());
+        try {
+            bot.execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 
     private void sendMessage(Long chatId, String text) {

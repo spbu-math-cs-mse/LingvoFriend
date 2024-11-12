@@ -66,15 +66,13 @@ public class Bot extends TelegramLongPollingBot {
         logger.trace("{} (user {}) wrote '{}'", user.getFirstName(), user.getUserName(), userMessage);
 
         if (userMessage.startsWith("/start")) {
-            this.isQuestionnaireFinished = false;
             questionnaireHandler.startQuestionnaire(chatId);
             return;
         }
-        else if (!this.isQuestionnaireFinished){
-            this.isQuestionnaireFinished = questionnaireHandler.handleResponse(chatId, userMessage);
-            if (!this.isQuestionnaireFinished) {
+        else if (userStates.containsKey(chatId) && userStates.getOrDefault(chatId, UserState.START) != UserState.COMPLETED){
+            questionnaireHandler.handleResponse(chatId, userMessage);
+            if (userStates.getOrDefault(chatId, UserState.START) != UserState.COMPLETED)
                 return;
-            }
         }
 
         String response;
@@ -112,5 +110,4 @@ public class Bot extends TelegramLongPollingBot {
     private final Map<Long, UserState> userStates = new ConcurrentHashMap<>();
     private final Map<Long, UserResponse> userResponses = new ConcurrentHashMap<>();
     private final QuestionnaireHandler questionnaireHandler;
-    private Boolean isQuestionnaireFinished;
 }
