@@ -1,0 +1,64 @@
+.header {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    /* font-size: 3em; */
+}
+
+.brand-name {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffb300;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10vh;
+    text-align: center;
+}
+
+.title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 15px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: #ffb300;
+    color: #fff;
+}
+
+.btn-secondary {
+    background-color: #ffffff;
+    color: #ffb300;
+    border: 2px solid #ffb300;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}
