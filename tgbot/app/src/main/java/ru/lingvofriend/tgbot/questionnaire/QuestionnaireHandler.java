@@ -56,6 +56,7 @@ public class QuestionnaireHandler {
                 row.add(new KeyboardButton("1"));
                 row.add(new KeyboardButton("2"));
                 keyboard.add(row);
+                keyboardMarkup.setResizeKeyboard(true);
                 keyboardMarkup.setKeyboard(keyboard);
                 message.setReplyMarkup(keyboardMarkup);
                 try {
@@ -86,6 +87,7 @@ public class QuestionnaireHandler {
                 row1.add(new KeyboardButton("Да"));
                 row1.add(new KeyboardButton("Нет"));
                 keyboard1.add(row1);
+                keyboardMarkup1.setResizeKeyboard(true);
                 keyboardMarkup1.setKeyboard(keyboard1);
                 message1.setReplyMarkup(keyboardMarkup1);
                 try {
