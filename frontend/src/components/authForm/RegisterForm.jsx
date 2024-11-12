@@ -27,7 +27,8 @@ const RegisterForm = () => {
                 console.log("Account created");
                 navigate("/");
             } else {
-                alert("Invalid credentials");
+                const errorMessage = await response.text();
+                alert(errorMessage);
             }
         } catch (error) {
             console.error("Error during login:", error);
@@ -72,7 +73,7 @@ const RegisterForm = () => {
 
                     <button
                         className="register-button"
-                        onClick={() => navigate("/register")}
+                        onClick={() => navigate("/login")}
                     >
                         Войти в существующий
                     </button>

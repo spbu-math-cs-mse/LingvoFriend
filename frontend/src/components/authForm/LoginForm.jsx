@@ -27,7 +27,8 @@ const LoginForm = () => {
                 console.log("Login successful");
                 navigate("/home");
             } else {
-                alert("Invalid credentials");
+                const errorMessage = await response.text();
+                alert(errorMessage);
             }
         } catch (error) {
             console.error("Error during login:", error);
