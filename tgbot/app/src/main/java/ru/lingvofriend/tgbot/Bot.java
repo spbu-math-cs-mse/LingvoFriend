@@ -12,7 +12,13 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import ru.lingvofriend.tgbot.questionnaire.QuestionnaireHandler;
+import ru.lingvofriend.tgbot.questionnaire.UserResponse;
+import ru.lingvofriend.tgbot.questionnaire.UserState;
 
 public class Bot extends TelegramLongPollingBot {
     public static void main(String[] args) {
@@ -37,6 +43,7 @@ public class Bot extends TelegramLongPollingBot {
         super(token);
         this.token = token;
         this.gptClient = yandexApiKey != null ? new YandexGPTClient(yandexApiKey) : null;
+        this.questionnaireHandler = new QuestionnaireHandler(userStates, userResponses, this);
     }
 
     @Override
@@ -57,6 +64,16 @@ public class Bot extends TelegramLongPollingBot {
         Long chatId = message.getChatId();
 
         logger.trace("{} (user {}) wrote '{}'", user.getFirstName(), user.getUserName(), userMessage);
+
+        if (userMessage.startsWith("/start")) {
+            questionnaireHandler.startQuestionnaire(chatId);
+            return;
+        }
+        else if (userStates.containsKey(chatId) && userStates.getOrDefault(chatId, UserState.START) != UserState.COMPLETED){
+            questionnaireHandler.handleResponse(chatId, userMessage);
+            if (userStates.getOrDefault(chatId, UserState.START) != UserState.COMPLETED)
+                return;
+        }
 
         String response;
         if (gptClient != null) {
@@ -89,4 +106,8 @@ public class Bot extends TelegramLongPollingBot {
     private final YandexGPTClient gptClient;
     private static final Logger logger = LogManager.getLogger();
     private final Set<Long> usersInChatMode = new HashSet<>();
+
+    private final Map<Long, UserState> userStates = new ConcurrentHashMap<>();
+    private final Map<Long, UserResponse> userResponses = new ConcurrentHashMap<>();
+    private final QuestionnaireHandler questionnaireHandler;
 }
