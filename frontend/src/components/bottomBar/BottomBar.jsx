@@ -1,9 +1,8 @@
 import React from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./bottomBar.css";
 
 const BottomBar = () => {
-    const navigate = useNavigate();
     return (
         <div>
             <nav className="nav">
@@ -29,11 +28,7 @@ const BottomBar = () => {
                         </Link>
                     </li>
                     <li>
-                        <Link
-                            to="/"
-                            className="nav_link"
-                            onClick={navigate("/")}
-                        >
+                        <Link to="/" className="nav_link">
                             <i className="ri-logout-box-r-line"></i>
                         </Link>
                     </li>
