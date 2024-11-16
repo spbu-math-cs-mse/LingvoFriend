@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   mongodb:
     image: mongo
@@ -20,6 +19,11 @@ services:
       - ME_CONFIG_MONGODB_ADMINUSERNAME=rootuser
       - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpass
       - ME_CONFIG_MONGODB_SERVER=mongodb
+  backend:
+    build: .
+    container_name: lingvofriend-backend
+    ports:
+      - 8080:8080
 volumes:
   data: {}
 
