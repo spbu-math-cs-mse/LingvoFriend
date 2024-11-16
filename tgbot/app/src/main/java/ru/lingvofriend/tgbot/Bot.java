@@ -11,6 +11,10 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -21,21 +25,27 @@ import ru.lingvofriend.tgbot.questionnaire.UserResponse;
 import ru.lingvofriend.tgbot.questionnaire.UserState;
 
 public class Bot extends TelegramLongPollingBot {
-    public static void main(String[] args) {
-        if (args.length != 2) {
-            logger.fatal("expected two command-line arguments: bot token and YandexGPT API key");
+    public static void main(String[] argv) {
+        String token;
+        try {
+            token = loadToken();
+        } catch (IOException e) {
+            logger.fatal("failed to load tgbot token", e);
+            return;
+        }
+        String yandexApiKey;
+        try {
+            yandexApiKey = loadYandexApiKey();
+        } catch (IOException e) {
+            logger.fatal("failed to load yandex api key", e);
             return;
         }
         logger.info("starting lingvofriend tgbot...");
-        logger.info("token: {}", args[0]);
-        logger.info("yandex api key: {}", args[1]);
-        String token = args[0];
-        String yandexApiKey = args[1];
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(new Bot(token, yandexApiKey));
         } catch (TelegramApiException e) {
-            logger.fatal("telegram api exception: {}", e);
+            logger.fatal("telegram api exception", e);
         }
     }
 
@@ -68,8 +78,7 @@ public class Bot extends TelegramLongPollingBot {
         if (userMessage.startsWith("/start")) {
             questionnaireHandler.startQuestionnaire(chatId);
             return;
-        }
-        else if (userStates.containsKey(chatId) && userStates.getOrDefault(chatId, UserState.START) != UserState.COMPLETED){
+        } else if (userStates.containsKey(chatId) && userStates.getOrDefault(chatId, UserState.START) != UserState.COMPLETED) {
             questionnaireHandler.handleResponse(chatId, userMessage);
             if (userStates.getOrDefault(chatId, UserState.START) != UserState.COMPLETED)
                 return;
@@ -94,12 +103,32 @@ public class Bot extends TelegramLongPollingBot {
 
         try {
             execute(SendMessage.builder()
-                    .chatId(chatId.toString())
-                    .text(response)
-                    .build());
+                .chatId(chatId.toString())
+                .text(response)
+                .build());
         } catch (TelegramApiException e) {
             logger.error("Failed to send message: {}", e.getMessage());
         }
+    }
+
+    private static String loadToken() throws IOException {
+        String tokenFile = System.getenv("LINGVOFRIEND_TGBOT_TOKEN_FILE");
+        if (tokenFile == null) {
+            throw new IOException("LINGVOFRIEND_TGBOT_TOKEN_FILE is not defined. Please define this environment variable - a path to a file containing tgbot token secret");
+        }
+        Path tokenPath = Paths.get(tokenFile);
+        String token = Files.readString(tokenPath).trim();
+        return token;
+    }
+
+    private static String loadYandexApiKey() throws IOException {
+        String keyFile = System.getenv("LINGVOFRIEND_YANDEX_API_KEY_FILE");
+        if (keyFile == null) {
+            throw new IOException("LINGVOFRIEND_YANDEX_API_KEY_FILE is not defined. Please define this environment variable - a path to a file containing Yandex API key secret");
+        }
+        Path keyPath = Paths.get(keyFile);
+        String key = Files.readString(keyPath).trim();
+        return key;
     }
 
     private final String token;
