@@ -1,7 +1,7 @@
 services:
   mongodb:
     image: mongo
-    container_name: mongodb
+    container_name: lingvofriend-mongodb
     ports:
       - 27017:27017
     volumes:
@@ -11,7 +11,7 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=rootpass
   mongo-express:
     image: mongo-express
-    container_name: mongo-express
+    container_name: lingvofriend-mongo-express
     restart: always
     ports:
       - 8081:8081
@@ -20,10 +20,15 @@ services:
       - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpass
       - ME_CONFIG_MONGODB_SERVER=mongodb
   backend:
-    build: .
+    build: ./backend/
     container_name: lingvofriend-backend
     ports:
       - 8080:8080
+  frontend:
+    build: ./frontend/
+    container_name: lingvofriend-frontend
+    ports:
+      - 3000:3000
 volumes:
   data: {}
 
