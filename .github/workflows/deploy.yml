@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-      - 47.CI # TODO remove before merging to main
+      - 47.CI # TODO remove before merging to main 
 jobs:
   deploy:
     runs-on: ubuntu-latest
