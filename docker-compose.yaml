@@ -1,0 +1,52 @@
+services:
+  mongodb:
+    image: mongo
+    container_name: lingvofriend-mongodb
+    ports:
+      - 27017:27017
+    volumes:
+      - data:/data
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=rootuser
+      - MONGO_INITDB_ROOT_PASSWORD=rootpass
+  mongo-express:
+    image: mongo-express
+    container_name: lingvofriend-mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=rootuser
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpass
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+  backend:
+    build: ./backend/
+    container_name: lingvofriend-backend
+    ports:
+      - 8080:8080
+  frontend:
+    build: ./frontend/
+    container_name: lingvofriend-frontend
+    ports:
+      - 3000:3000
+  tgbot:
+    build: ./tgbot/
+    container_name: lingvofriend-tgbot
+    secrets:
+      - tgbot_token
+      - yandexgpt_api_key
+    environment:
+      LINGVOFRIEND_TGBOT_TOKEN_FILE: /run/secrets/tgbot_token
+      LINGVOFRIEND_YANDEXGPT_API_KEY_FILE: /run/secrets/yandexgpt_api_key
+volumes:
+  data: {}
+
+networks:
+  default:
+    name: mongodb_network
+
+secrets:
+  tgbot_token:
+    environment: "LINGVOFRIEND_TGBOT_TOKEN"
+  yandexgpt_api_key:
+    environment: "LINGVOFRIEND_YANDEXGPT_API_KEY"

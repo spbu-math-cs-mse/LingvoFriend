@@ -1,3 +1,5 @@
 ```sh
-./gradlew :app:run --args="'<token>' '<yandex api key>'"
+LINGVOFRIEND_TGBOT_TOKEN_FILE=<file> \
+LINGVOFRIEND_YANDEXGPT_API_KEY_FILE=<file> \
+./gradlew run
 ```
