@@ -34,7 +34,7 @@ public class QuestionnaireHandler {
         userStates.put(chatId, UserState.ASK_NAME);
         userResponses.put(chatId, new UserResponse());
         sendMessage(chatId, "Добро пожаловать в Lingvo Friend! Давай познакомимся получше:\n\n" +
-                "Сдохни, ублюдок.");
+                "Как тебя зовут?");
     }
 
     public void handleResponse(Long chatId, String text) {
