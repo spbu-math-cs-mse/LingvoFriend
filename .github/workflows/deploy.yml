@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - 47.CI # TODO remove before merging to main 
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -20,6 +21,7 @@ jobs:
           SCRIPT_BEFORE: |
             cd /home/github-ci/LingvoFriend
             sudo docker compose down
+            docker system prune -a
           SCRIPT_AFTER_REQUIRED: true
           SCRIPT_AFTER: |
             cd /home/github-ci/LingvoFriend
