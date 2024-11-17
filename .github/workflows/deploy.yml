@@ -17,9 +17,10 @@ jobs:
           REMOTE_HOST: ${{ secrets.YANDEX_CLOUD_SSH_HOST }}
           REMOTE_USER: github-ci
           TARGET: /home/github-ci/LingvoFriend
-          # SCRIPT_BEFORE_REQUIRED: true
-          # SCRIPT_BEFORE: |
-          #   docker compose down
+          SCRIPT_BEFORE_REQUIRED: true
+          SCRIPT_BEFORE: |
+            cd /home/github-ci/LingvoFriend
+            docker compose down
           # SCRIPT_AFTER_REQUIRED: true
           # SCRIPT_AFTER: |
           #   LINGVOFRIEND_TGBOT_TOKEN=${{ secrets.LINGVOFRIEND_TGBOT_TOKEN }} \
