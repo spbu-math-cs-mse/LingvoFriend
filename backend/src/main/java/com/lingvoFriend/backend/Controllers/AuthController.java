@@ -35,14 +35,14 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
-        if (userRepository.existsByUsername(registerDto.username)) {
+        if (userRepository.existsByUsername(registerDto.getUsername())) {
             return new ResponseEntity<>("Username is taken", HttpStatus.BAD_REQUEST);
         }
 
         UserModel userModel =
                 new UserModel(
-                        registerDto.username,
-                        passwordEncoder.encode(registerDto.password),
+                        registerDto.getUsername(),
+                        passwordEncoder.encode(registerDto.getPassword()),
                         List.of(roleRepository.findByRoleName("USER")));
 
         userRepository.save(userModel);
@@ -53,13 +53,15 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginDto.getUsername(), loginDto.getPassword()));
+            Authentication authentication =
+                    authenticationManager.authenticate(
+                            new UsernamePasswordAuthenticationToken(
+                                    loginDto.getUsername(), loginDto.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             return new ResponseEntity<>("Successfully logged in", HttpStatus.OK);
         } catch (BadCredentialsException ex) {
-            return new ResponseEntity<>("User not found or incorrect password", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(
+                    "User not found or incorrect password", HttpStatus.UNAUTHORIZED);
         }
     }
 }

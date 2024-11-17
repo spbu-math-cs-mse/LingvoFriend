@@ -1,30 +1,33 @@
 package com.lingvoFriend.backend.Controllers;
 
-import com.lingvoFriend.backend.Repositories.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.lingvoFriend.backend.LLMService.LLMService;
+import com.lingvoFriend.backend.LLMService.RequestModel;
+import com.lingvoFriend.backend.dto.LLMRequestDto;
 
 import lombok.AllArgsConstructor;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-// for now basic controller for future paths
-// at / and /home return some text
-// every other get request path redirects to /home
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 @RestController
 @AllArgsConstructor
+@RequestMapping("/api")
 class Controller {
 
-    private final UserRepository repository;
+    private final LLMService llmService;
 
-    @GetMapping("/")
-    public String Greetings() {
-        return "<h1>Hey<h1>";
-    }
+    @PostMapping("/llm")
+    public Mono<String> sendRequestToLLM(@RequestBody LLMRequestDto llmRequestDto)
+            throws JsonProcessingException {
 
-    @GetMapping("/home")
-    public String Greetings1() {
+        RequestModel request =
+                new RequestModel(
+                        llmRequestDto.getModelUri(),
+                        new RequestModel.CompletionOptions(false, 0.6, "2000"),
+                        llmRequestDto.getMessages());
 
-        return "<h1>Home<h1>";
+        return llmService
+                .sendPostRequest(llmRequestDto.getApiKey(), llmRequestDto.getFolderId(), request)
+                .map(res -> res.getResult().getAlternatives().get(0).getMessage().getText());
     }
 }

@@ -14,13 +14,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // for now this filter requires authentication for every path besides "/api/auth/**"
+    // for now this filter requires authentication for every path besides "/api/**"
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
                         requests ->
-                                requests.requestMatchers("/api/auth/**")
+                                requests.requestMatchers("/api/**")
                                         .permitAll()
                                         .anyRequest()
                                         .authenticated())
