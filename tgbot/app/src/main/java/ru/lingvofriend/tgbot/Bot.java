@@ -122,9 +122,9 @@ public class Bot extends TelegramLongPollingBot {
     }
 
     private static String loadYandexApiKey() throws IOException {
-        String keyFile = System.getenv("LINGVOFRIEND_YANDEX_API_KEY_FILE");
+        String keyFile = System.getenv("LINGVOFRIEND_YANDEXGPT_API_KEY_FILE");
         if (keyFile == null) {
-            throw new IOException("LINGVOFRIEND_YANDEX_API_KEY_FILE is not defined. Please define this environment variable - a path to a file containing Yandex API key secret");
+            throw new IOException("LINGVOFRIEND_YANDEXGPT_API_KEY_FILE is not defined. Please define this environment variable - a path to a file containing Yandex API key secret");
         }
         Path keyPath = Paths.get(keyFile);
         String key = Files.readString(keyPath).trim();
