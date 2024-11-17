@@ -16,6 +16,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.YANDEX_CLOUD_SSH_PRIVATE_KEY }}
           REMOTE_HOST: ${{ secrets.YANDEX_CLOUD_SSH_HOST }}
           REMOTE_USER: github-ci
+          TARGET: /home/github-ci/LingvoFriend
           # SCRIPT_BEFORE_REQUIRED: true
           # SCRIPT_BEFORE: |
           #   docker compose down
