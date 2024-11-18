@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - 47.CI
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -16,6 +17,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.YANDEX_CLOUD_SSH_HOST }}
           REMOTE_USER: github-ci
           TARGET: /home/github-ci/LingvoFriend
+          ARGS: -rlgoDzvc -i --exclude .git --exclude .env
           SCRIPT_BEFORE_REQUIRED: true
           SCRIPT_BEFORE: |
             cd /home/github-ci/LingvoFriend
