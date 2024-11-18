@@ -1,4 +1,4 @@
-package com.lingvoFriend.backend.dto;
+package com.lingvoFriend.backend.Services.AuthService.dto;
 
 import lombok.Data;
 
@@ -6,6 +6,6 @@ import lombok.Data;
 
 @Data
 public class RegisterDto {
-    public String username;
-    public String password;
+    private String username;
+    private String password;
 }

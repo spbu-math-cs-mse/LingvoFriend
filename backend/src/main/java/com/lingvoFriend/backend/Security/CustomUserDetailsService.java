@@ -1,8 +1,8 @@
 package com.lingvoFriend.backend.Security;
 
 import com.lingvoFriend.backend.Repositories.UserRepository;
-import com.lingvoFriend.backend.models.RoleModel;
-import com.lingvoFriend.backend.models.UserModel;
+import com.lingvoFriend.backend.Services.AuthService.models.RoleModel;
+import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
