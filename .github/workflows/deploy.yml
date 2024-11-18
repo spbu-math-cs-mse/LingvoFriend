@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - 47.CI
 jobs:
   deploy:
     runs-on: ubuntu-latest
