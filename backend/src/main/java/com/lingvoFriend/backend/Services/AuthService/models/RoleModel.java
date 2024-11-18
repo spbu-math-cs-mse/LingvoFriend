@@ -1,4 +1,4 @@
-package com.lingvoFriend.backend.models;
+package com.lingvoFriend.backend.Services.AuthService.models;
 
 import lombok.Data;
 

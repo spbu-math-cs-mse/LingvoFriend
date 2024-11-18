@@ -1,11 +1,11 @@
-package com.lingvoFriend.backend.LLMService;
+package com.lingvoFriend.backend.Services.ChatService.models;
 
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class ResponseModel {
+public class LlmResponseModel {
     private Result result;
 
     @Data

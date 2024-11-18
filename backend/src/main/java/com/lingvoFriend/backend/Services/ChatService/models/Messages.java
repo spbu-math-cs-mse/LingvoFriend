@@ -1,4 +1,4 @@
-package com.lingvoFriend.backend.LLMService;
+package com.lingvoFriend.backend.Services.ChatService.models;
 
 import lombok.Data;
 

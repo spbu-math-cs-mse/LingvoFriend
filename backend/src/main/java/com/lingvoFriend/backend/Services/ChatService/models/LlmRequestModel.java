@@ -1,4 +1,4 @@
-package com.lingvoFriend.backend.LLMService;
+package com.lingvoFriend.backend.Services.ChatService.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class RequestModel {
+public class LlmRequestModel {
     private String modelUri;
     private CompletionOptions completionOptions;
     private List<Message> messages;

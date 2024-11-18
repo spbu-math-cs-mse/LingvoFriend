@@ -1,4 +1,4 @@
-package com.lingvoFriend.backend.dto;
+package com.lingvoFriend.backend.Services.AuthService.dto;
 
 import lombok.Data;
 

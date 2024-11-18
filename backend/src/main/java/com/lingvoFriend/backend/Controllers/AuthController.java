@@ -1,24 +1,13 @@
 package com.lingvoFriend.backend.Controllers;
 
-import com.lingvoFriend.backend.Repositories.RoleRepository;
-import com.lingvoFriend.backend.Repositories.UserRepository;
-import com.lingvoFriend.backend.dto.LoginDto;
-import com.lingvoFriend.backend.dto.RegisterDto;
-import com.lingvoFriend.backend.models.UserModel;
+import com.lingvoFriend.backend.Services.AuthService.AuthService;
+import com.lingvoFriend.backend.Services.AuthService.dto.LoginDto;
+import com.lingvoFriend.backend.Services.AuthService.dto.RegisterDto;
 
 import lombok.AllArgsConstructor;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 // here is the logic and mapping for AuthControllers
 
@@ -28,40 +17,15 @@ import java.util.List;
 @CrossOrigin
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
-        if (userRepository.existsByUsername(registerDto.getUsername())) {
-            return new ResponseEntity<>("Username is taken", HttpStatus.BAD_REQUEST);
-        }
-
-        UserModel userModel =
-                new UserModel(
-                        registerDto.getUsername(),
-                        passwordEncoder.encode(registerDto.getPassword()),
-                        List.of(roleRepository.findByRoleName("USER")));
-
-        userRepository.save(userModel);
-
-        return new ResponseEntity<>("Successfully registered", HttpStatus.CREATED);
+        return authService.register(registerDto);
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
-        try {
-            Authentication authentication =
-                    authenticationManager.authenticate(
-                            new UsernamePasswordAuthenticationToken(
-                                    loginDto.getUsername(), loginDto.getPassword()));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            return new ResponseEntity<>("Successfully logged in", HttpStatus.OK);
-        } catch (BadCredentialsException ex) {
-            return new ResponseEntity<>(
-                    "User not found or incorrect password", HttpStatus.UNAUTHORIZED);
-        }
+        return authService.login(loginDto);
     }
 }

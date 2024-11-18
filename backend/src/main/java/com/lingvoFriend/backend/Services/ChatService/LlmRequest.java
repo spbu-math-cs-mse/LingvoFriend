@@ -1,4 +1,7 @@
-package com.lingvoFriend.backend.LLMService;
+package com.lingvoFriend.backend.Services.ChatService;
+
+import com.lingvoFriend.backend.Services.ChatService.models.LlmRequestModel;
+import com.lingvoFriend.backend.Services.ChatService.models.LlmResponseModel;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -6,16 +9,16 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Service
-public class LLMService {
+public class LlmRequest {
 
     private final WebClient webClient;
 
-    public LLMService(WebClient.Builder webClientBuilder) {
+    public LlmRequest(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.baseUrl("https://llm.api.cloud.yandex.net").build();
     }
 
-    public Mono<ResponseModel> sendPostRequest(
-            String APIKEY, String folderID, RequestModel requestModel) {
+    public Mono<LlmResponseModel> sendPostRequest(
+            String APIKEY, String folderID, LlmRequestModel requestModel) {
         return webClient
                 .post()
                 .uri("/foundationModels/v1/completion")
@@ -27,6 +30,6 @@ public class LLMService {
                         })
                 .bodyValue(requestModel)
                 .retrieve()
-                .bodyToMono(ResponseModel.class);
+                .bodyToMono(LlmResponseModel.class);
     }
 }

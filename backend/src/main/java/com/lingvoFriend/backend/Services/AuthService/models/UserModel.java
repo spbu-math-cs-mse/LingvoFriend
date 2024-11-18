@@ -1,4 +1,6 @@
-package com.lingvoFriend.backend.models;
+package com.lingvoFriend.backend.Services.AuthService.models;
+
+import com.lingvoFriend.backend.Services.ChatService.models.Message;
 
 import lombok.Data;
 
@@ -18,12 +20,15 @@ public class UserModel {
     private String username;
     private String password;
 
-    @DBRef
-    private List<RoleModel> roles;
+    @DBRef private List<RoleModel> roles;
 
-    public UserModel(String username, String password, List<RoleModel> roles) {
+    private List<Message> messages;
+
+    public UserModel(
+            String username, String password, List<RoleModel> roles, List<Message> messages) {
         this.username = username;
         this.password = password;
         this.roles = roles;
+        this.messages = messages;
     }
 }

@@ -1,6 +1,7 @@
 package com.lingvoFriend.backend.Repositories;
 
-import com.lingvoFriend.backend.models.UserModel;
+import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
+
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
