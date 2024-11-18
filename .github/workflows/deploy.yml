@@ -1,0 +1,30 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Deploy via rsync & ssh
+        uses: easingthemes/ssh-deploy@v5.1.0
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.YANDEX_CLOUD_SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.YANDEX_CLOUD_SSH_HOST }}
+          REMOTE_USER: github-ci
+          TARGET: /home/github-ci/LingvoFriend
+          EXCLUDE: /.git, /**/.env
+          SCRIPT_BEFORE_REQUIRED: true
+          SCRIPT_BEFORE: |
+            cd /home/github-ci/LingvoFriend
+            sudo docker compose down
+            sudo docker system prune --all --force
+          SCRIPT_AFTER_REQUIRED: true
+          SCRIPT_AFTER: |
+            cd /home/github-ci/LingvoFriend
+            LINGVOFRIEND_TGBOT_TOKEN=${{ secrets.LINGVOFRIEND_TGBOT_TOKEN }} \
+            LINGVOFRIEND_YANDEXGPT_API_KEY=${{ secrets.LINGVOFRIEND_YANDEXGPT_API_KEY }} \
+            sudo -E docker compose up -d --build
