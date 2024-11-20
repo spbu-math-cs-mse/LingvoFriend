@@ -38,7 +38,8 @@ class Controller {
         this.API_KEY = dotenv.get("API_KEY");
         this.FOLDER_ID = dotenv.get("FOLDER_ID");
     }
-
+    //uncomment for local tests
+    //@CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/llm")
     public Mono<ResponseEntity<String>> sendRequestToLLM(@RequestBody LlmRequestDto llmRequestDto)
             throws JsonProcessingException {
@@ -97,6 +98,20 @@ class Controller {
                                     ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                             .body("An unexpected error occurred"));
                         });
+    }
+
+    //uncomment for local tests
+    //@CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/history/{username}")
+    public ResponseEntity<List<Message>> getChatHistory(@PathVariable String username) {
+        try {
+            List<Message> messages = chatService.getMessagesByUsername(username);
+            return ResponseEntity.ok(messages);
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @GetMapping("/test")

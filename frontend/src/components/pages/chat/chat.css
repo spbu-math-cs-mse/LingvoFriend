@@ -1,0 +1,148 @@
+.chat-container {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    width: 88%;
+    height: 100%;
+    transform: translate(-50%);
+    display: flex;
+    flex-direction: column;
+    color: white;
+    font-family: Arial, sans-serif;
+    padding-bottom: 100px;
+}
+
+.message-list {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.message-bubble {
+    margin: 5px 0;
+    padding: 10px 15px;
+    border-radius: 15px;
+    max-width: 70%;
+    color: black;
+}
+
+.message-bubble ol {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.message-bubble li {
+    margin: 5px 0;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.user-message {
+    background-color: #ffb300;
+    color: white;
+    align-self: flex-end;
+}
+
+.assistant-message {
+    background-color: #f6f6f6;
+    align-self: flex-start;
+}
+
+.input-bar {
+    display: flex;
+    align-items: flex-end;
+    align-self: center;
+    width: 100%;
+}
+
+.input-bar textarea {
+    flex: 1 1;
+    padding: 12px 16px;
+    border: 3px solid #f2f2f2;
+    border-radius: 1.5rem;
+    background-color: #f2f2f2;
+    color: black;
+    font-size: 14px;
+    outline: none;
+    resize: none;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.input-bar input::placeholder {
+    color: #696969;
+}
+
+.input-bar button {
+    width: 40px;
+    height: 40px;
+    margin-left: 10px;
+    margin-top: 0;
+    border: none;
+    border-radius: 50%;
+    background-color: #ffb300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: none;
+    transition: none;
+}
+
+.input-bar button:hover {
+    background-color: #eaa000;
+    box-shadow: none;
+    transform: none;
+}
+
+.input-bar button svg {
+    width: 23px;
+    fill: white;
+}
+
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 15px;
+    background-color: #f2f2f2;
+    border-radius: 15px;
+    width: fit-content;
+    max-width: 70%;
+    margin: 5px 10px;
+}
+
+.typing-indicator .dot {
+    width: 8px;
+    height: 8px;
+    margin: 0 4px;
+    background-color: #696969;
+    border-radius: 50%;
+    animation: typing 1.5s infinite;
+}
+
+.typing-indicator .dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator .dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0% {
+        opacity: 0.3;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0.3;
+        transform: scale(0.8);
+    }
+}

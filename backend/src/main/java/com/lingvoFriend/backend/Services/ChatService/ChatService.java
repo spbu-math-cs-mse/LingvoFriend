@@ -29,4 +29,11 @@ public class ChatService {
                 });
         return User.get().getMessages();
     }
+
+    public List<Message> getMessagesByUsername(String username) {
+        Optional<UserModel> user = userRepository.findByUsername(username);
+
+        return user.map(UserModel::getMessages)
+                   .orElseThrow(() -> new BadCredentialsException("User not found"));
+    }
 }

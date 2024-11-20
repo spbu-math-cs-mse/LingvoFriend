@@ -3,8 +3,8 @@ import { FaLock, FaUser } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
 import "./authForm.css";
 
-const LoginForm = () => {
-    const [username, setUsername] = useState("");
+const LoginForm = ({ setUsername }) => {
+    const [username, setInputUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
@@ -21,7 +21,8 @@ const LoginForm = () => {
             });
 
             if (response.ok) {
-                console.log("Login successful");
+                setUsername(username);
+                console.log("Login successful:", username);
                 navigate("/home");
             } else {
                 const errorMessage = await response.text();
@@ -46,7 +47,7 @@ const LoginForm = () => {
                         <input
                             type="text"
                             value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            onChange={(e) => setInputUsername(e.target.value)}
                             required
                             placeholder="Email или имя пользователя"
                         />
