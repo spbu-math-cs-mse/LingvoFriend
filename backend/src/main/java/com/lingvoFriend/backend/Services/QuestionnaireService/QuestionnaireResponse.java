@@ -17,4 +17,3 @@ public class QuestionnaireResponse {
     private List<String> interests;
 
 }
- 

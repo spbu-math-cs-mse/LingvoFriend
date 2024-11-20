@@ -1,124 +1,134 @@
 package com.lingvoFriend.backend.Services.QuestionnaireService;
 
+import com.lingvoFriend.backend.Repositories.UserRepository;
+import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.*;
 
+@Service
 public class QuestionnaireService {
     private static final List<String> INTERESTS = Arrays.asList(
             "Книги", "Музыка", "Путешествия", "Искусство", "Спорт",
-            "Игры", "Кулинария", "Технологии", "Стиль и мода", "Наука"
-    );
+            "Игры", "Кулинария", "Технологии", "Стиль и мода", "Наука");
 
-    private final Map<String, QuestionState> userStates = new HashMap<>();
-    private final Map<String, QuestionnaireResponse> responses = new HashMap<>();
+    private final UserRepository userRepository;
+
+    @Autowired
+    public QuestionnaireService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public QuestionnaireQuestion startQuestionnaire(String userId) {
-        userStates.put(userId, QuestionState.NAME);
-        responses.put(userId, new QuestionnaireResponse());
+        UserModel user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setQuestionState(QuestionState.NAME);
+        userRepository.save(user);
+
         return new QuestionnaireQuestion("""
                 Добро пожаловать в Lingvo Friend! Давай познакомимся получше:
-                
+
                 Как тебя зовут?""", null);
     }
 
     public QuestionnaireQuestion handleResponse(String userId, String answer) {
-        QuestionState state = userStates.getOrDefault(userId, QuestionState.NOT_STARTED);
-        QuestionnaireResponse response = responses.get(userId);
+        UserModel user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (response == null || state == QuestionState.NOT_STARTED) {
+        if (user.getQuestionState() == QuestionState.NOT_STARTED) {
             return new QuestionnaireQuestion("Сначала нужно познакомиться.", null);
         }
 
-        return processAnswer(userId, answer, state, response);
+        return processAnswer(user, answer);
     }
 
-    private QuestionnaireQuestion processAnswer(String userId, String answer, QuestionState state, QuestionnaireResponse response) {
-        switch (state) {
-            case NAME:
-                response.setName(answer);
-                userStates.put(userId, QuestionState.GENDER);
-                return new QuestionnaireQuestion(
+    private QuestionnaireQuestion processAnswer(UserModel user, String answer) {
+        QuestionnaireQuestion nextQuestion = switch (user.getQuestionState()) {
+            case NAME -> {
+                user.setName(answer);
+                user.setQuestionState(QuestionState.GENDER);
+                yield new QuestionnaireQuestion(
                         "Твой пол?",
-                        Arrays.asList("Мужской", "Женский")
-                );
-
-            case GENDER:
-                if (processGender(response, answer)) {
-                    userStates.put(userId, QuestionState.AGE);
-                    return new QuestionnaireQuestion("Сколько тебе лет?", null);
+                        Arrays.asList("Мужской", "Женский"));
+            }
+            case GENDER -> {
+                if (processGender(user, answer)) {
+                    user.setQuestionState(QuestionState.AGE);
+                    yield new QuestionnaireQuestion("Сколько тебе лет?", null);
                 }
-                return new QuestionnaireQuestion("Пожалуйста, выбери валидную опцию.", Arrays.asList("Мужской", "Женский"));
-
-            case AGE:
+                yield new QuestionnaireQuestion("Пожалуйста, выбери валидную опцию.",
+                        Arrays.asList("Мужской", "Женский"));
+            }
+            case AGE -> {
                 try {
                     int age = Integer.parseInt(answer.trim());
-                    response.setAge(age);
-                    userStates.put(userId, QuestionState.GOALS);
-                    return new QuestionnaireQuestion(
+                    user.setAge(age);
+                    user.setQuestionState(QuestionState.GOALS);
+                    yield new QuestionnaireQuestion(
                             "Какие твои цели в изучении английского?",
-                            null
-                    );
+                            null);
                 } catch (NumberFormatException e) {
-                    return new QuestionnaireQuestion(
+                    yield new QuestionnaireQuestion(
                             "Пожалуйста, введите число.",
-                            null
-                    );
+                            null);
                 }
-
-            case GOALS:
-                response.setGoals(answer);
-                userStates.put(userId, QuestionState.ENGLISH_EXPERIENCE);
-                return new QuestionnaireQuestion(
+            }
+            case GOALS -> {
+                user.setGoals(answer);
+                user.setQuestionState(QuestionState.ENGLISH_EXPERIENCE);
+                yield new QuestionnaireQuestion(
                         "Вы изучали английский до этого?",
-                        Arrays.asList("Да", "Нет")
-                );
-
-            case ENGLISH_EXPERIENCE:
-                response.setEnglishExperience(answer);
-                userStates.put(userId, QuestionState.INTERESTS);
-                return new QuestionnaireQuestion("Выбери свои интересы: ", INTERESTS);
-
-            case INTERESTS:
-                if (processInterests(response, answer)) {
-                    userStates.put(userId, QuestionState.COMPLETED);
-                    return new QuestionnaireQuestion(
+                        Arrays.asList("Да", "Нет"));
+            }
+            case ENGLISH_EXPERIENCE -> {
+                user.setEnglishExperience(answer);
+                user.setQuestionState(QuestionState.INTERESTS);
+                yield new QuestionnaireQuestion("Выбери свои интересы: ", INTERESTS);
+            }
+            case INTERESTS -> {
+                if (processInterests(user, answer)) {
+                    user.setQuestionState(QuestionState.COMPLETED);
+                    yield new QuestionnaireQuestion(
                             "Спасибо за прохождение опроса!",
-                            null
-                    );
+                            null);
                 }
-                return new QuestionnaireQuestion(
+                yield new QuestionnaireQuestion(
                         "Выберите интересы из списка.",
-                        INTERESTS
-                );
-
-            case COMPLETED:
-                return new QuestionnaireQuestion(
+                        INTERESTS);
+            }
+            case COMPLETED -> {
+                yield new QuestionnaireQuestion(
                         "Вы уже проходили опрос.",
-                        null
-                );
-
-            default:
-                return new QuestionnaireQuestion(
+                        null);
+            }
+            default -> {
+                yield new QuestionnaireQuestion(
                         "Сначала нужно познакомиться.",
-                        null
-                );
-        }
+                        null);
+            }
+        };
+
+        userRepository.save(user);
+        return nextQuestion;
     }
 
-    private boolean processGender(QuestionnaireResponse response, String answer) {
+    private boolean processGender(UserModel user, String answer) {
         return switch (answer) {
             case "Мужской" -> {
-                response.setGender("He/Him");
+                user.setGender("He/Him");
                 yield true;
             }
             case "Женский" -> {
-                response.setGender("She/Her");
+                user.setGender("She/Her");
                 yield true;
             }
             default -> false;
         };
     }
 
-    private boolean processInterests(QuestionnaireResponse response, String answer) {
+    private boolean processInterests(UserModel user, String answer) {
         String[] selections = answer.split(",");
         List<String> selectedInterests = new ArrayList<>();
 
@@ -132,7 +142,7 @@ public class QuestionnaireService {
             return false;
         }
 
-        response.setInterests(selectedInterests);
+        user.setInterests(selectedInterests);
         return true;
     }
 
@@ -141,6 +151,8 @@ public class QuestionnaireService {
     }
 
     public QuestionnaireResponse getResponse(String userId) {
-        return responses.get(userId);
+        UserModel user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getQuestionnaireResponse();
     }
-} 
+}

@@ -10,4 +10,3 @@ public enum QuestionState {
     INTERESTS,
     COMPLETED
 }
- 

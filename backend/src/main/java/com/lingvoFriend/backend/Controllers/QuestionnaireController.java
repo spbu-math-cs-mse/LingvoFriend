@@ -2,6 +2,7 @@ package com.lingvoFriend.backend.Controllers;
 
 import com.lingvoFriend.backend.Services.QuestionnaireService.QuestionnaireQuestion;
 import com.lingvoFriend.backend.Services.QuestionnaireService.QuestionnaireService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,15 +18,22 @@ public class QuestionnaireController {
     }
 
     @PostMapping("/start")
-    public QuestionnaireQuestion startQuestionnaire(@RequestParam String userId) {
-        return questionnaireService.startQuestionnaire(userId);
+    public ResponseEntity<QuestionnaireQuestion> startQuestionnaire(@RequestParam String userId) {
+        try {
+            return ResponseEntity.ok(questionnaireService.startQuestionnaire(userId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PostMapping("/answer")
-    public QuestionnaireQuestion submitAnswer(
+    public ResponseEntity<QuestionnaireQuestion> submitAnswer(
             @RequestParam String userId,
-            @RequestParam String answer
-    ) {
-        return questionnaireService.handleResponse(userId, answer);
+            @RequestParam String answer) {
+        try {
+            return ResponseEntity.ok(questionnaireService.handleResponse(userId, answer));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }
