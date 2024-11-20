@@ -1,0 +1,134 @@
+.questionnaire-progress-bar-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+}
+
+.back-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    color: #333;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    margin-right: 10px;
+}
+
+.ri-arrow-left-line {
+    font-size: 2em;
+}
+
+.back-button:hover {
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    transform: translateY(0);
+}
+
+.questionnaire-question {
+    font-size: 1.8rem;
+    color: #333;
+    text-align: center;
+    margin-bottom: 70px;
+    width: 100%;
+}
+
+.questionnaire-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+}
+
+.questionnaire-buttons-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 30px;
+    row-gap: 5px;
+    margin-bottom: 80px;
+    max-width: 800px;
+    width: 150%;
+    justify-items: center;
+}
+
+.icone {
+    width: 40px;
+    height: 40px;
+    transition: fill 0.3s ease;
+}
+
+.questionnaire-button {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    padding: 15px 25px;
+    font-size: 1.2rem;
+    height: 70px;
+    width: 100%;
+    border: 2px solid #ffb300;
+    border-radius: 8px;
+    background-color: white;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.questionnaire-button.selected {
+    background-color: #ffb300;
+    color: white;
+}
+
+.questionnaire-button:active {
+    transform: translateY(5px);
+}
+
+.questionnaire-next-button-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 15%;
+    width: 100%;
+    background-color: white;
+}
+
+.line-above-button {
+    height: 1px;
+    background-color: #ccc;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.questionnaire-next-button {
+    position: absolute;
+    right: 20px;
+    width: 7%;
+    margin-right: 25%;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #ffb300;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.questionnaire-next-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.questionnaire-next-button:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.15);
+}
