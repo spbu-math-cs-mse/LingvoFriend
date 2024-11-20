@@ -13,7 +13,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    /* font-family: "Poppins", sans-serif; */
     font-family: "Montserrat Alternates";
 }
 
@@ -24,9 +23,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    /* background: #1f1f47; */
     background-color: hsl(225, 100% 99%);
-    /* background: aliceblue; */
     overflow: hidden;
 }
 
