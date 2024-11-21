@@ -14,7 +14,7 @@ jobs:
         uses: easingthemes/ssh-deploy@v5.1.0
         with:
           ARGS: -rlgoDzvc -i --delete
-          SSH_CMD_ARGS: ServerAliveInterval=1500
+          SSH_CMD_ARGS: -o ServerAliveInterval=1500
           SSH_PRIVATE_KEY: ${{ secrets.YANDEX_CLOUD_SSH_PRIVATE_KEY }}
           REMOTE_HOST: ${{ secrets.YANDEX_CLOUD_SSH_HOST }}
           REMOTE_USER: github-ci
