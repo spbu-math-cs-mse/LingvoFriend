@@ -13,6 +13,8 @@ jobs:
       - name: Deploy via rsync & ssh
         uses: easingthemes/ssh-deploy@v5.1.0
         with:
+          ARGS: -rlgoDzvc -i --delete
+          SSH_CMD_ARGS: -o ServerAliveInterval=1500
           SSH_PRIVATE_KEY: ${{ secrets.YANDEX_CLOUD_SSH_PRIVATE_KEY }}
           REMOTE_HOST: ${{ secrets.YANDEX_CLOUD_SSH_HOST }}
           REMOTE_USER: github-ci
@@ -22,7 +24,7 @@ jobs:
           SCRIPT_BEFORE: |
             cd /home/github-ci/LingvoFriend
             sudo docker compose down
-            sudo docker system prune --all --force
+            sudo docker system prune
           SCRIPT_AFTER_REQUIRED: true
           SCRIPT_AFTER: |
             cd /home/github-ci/LingvoFriend
