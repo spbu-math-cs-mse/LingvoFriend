@@ -24,7 +24,7 @@ jobs:
           SCRIPT_BEFORE: |
             cd /home/github-ci/LingvoFriend
             sudo docker compose down
-            sudo docker system prune
+            sudo docker system prune --filter "label!=lingvofriend-mongodb" --filter "label!=lingvofriend-mongo-express"
           SCRIPT_AFTER_REQUIRED: true
           SCRIPT_AFTER: |
             cd /home/github-ci/LingvoFriend
