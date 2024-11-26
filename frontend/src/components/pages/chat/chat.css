@@ -53,8 +53,7 @@
 
 .input-bar {
     display: flex;
-    align-items: flex-end;
-    align-self: center;
+    align-items: center;
     width: 100%;
 }
 

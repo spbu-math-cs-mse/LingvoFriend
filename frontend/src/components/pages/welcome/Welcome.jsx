@@ -14,13 +14,13 @@ const Welcome = () => {
                 <h1 className="title">Современный подход к изучению языков</h1>
                 <div className="button-group">
                     <button
-                        className="btn btn-primary"
+                        className="welcome-btn-primary"
                         onClick={() => navigate("/login")}
                     >
                         Вход
                     </button>
                     <button
-                        className="btn btn-secondary"
+                        className="welcome-btn-secondary"
                         onClick={() => navigate("/register")}
                     >
                         Регистрация

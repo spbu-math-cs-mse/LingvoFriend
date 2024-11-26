@@ -1,8 +1,15 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./bottomBar.css";
 
 const BottomBar = () => {
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.clear();
+        navigate("/");
+    };
+
     return (
         <div>
             <nav className="nav">
@@ -28,9 +35,9 @@ const BottomBar = () => {
                         </Link>
                     </li>
                     <li>
-                        <Link to="/" className="nav_link">
+                        <button onClick={handleLogout} className="nav_link">
                             <i className="ri-logout-box-r-line"></i>
-                        </Link>
+                        </button>
                     </li>
                 </ul>
             </nav>

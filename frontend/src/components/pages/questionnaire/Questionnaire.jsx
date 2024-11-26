@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import Interests from "./pages/interests/Interests";
@@ -18,56 +18,40 @@ function Questionnaire() {
     const progress = (currentStep / totalSteps) * 100;
 
     const handleNextStep = () => {
-        if (currentStep < totalSteps) {
-            setCurrentStep((prevStep) => prevStep + 1);
-
-            const nextStep =
-                currentStep === 1
-                    ? "interests"
-                    : currentStep === 2
-                    ? "survey"
-                    : "goals";
+        if (currentStep < totalSteps - 1) {
+            const steps = ["goals", "interests", "survey"];
+            const nextStep = steps[currentStep];
+            setCurrentStep(currentStep + 1);
             navigate(`/questionnaire?questStep=${nextStep}`);
         } else {
-            setCurrentStep(1);
+            navigate("/home");
+        }
+    };
+
+    const handleBackStep = () => {
+        if (currentStep > 1) {
+            const steps = ["goals", "interests", "survey"];
+            const prevStep = steps[currentStep - 2];
+            setCurrentStep(currentStep - 1);
+            navigate(`/questionnaire?questStep=${prevStep}`);
         }
     };
 
     useEffect(() => {
-        if (!page) {
-            navigate(`${location.pathname}?questStep=goals`, { replace: true });
+        const steps = ["goals", "interests", "survey"];
+        const stepIndex = steps.indexOf(page);
+        if (stepIndex >= 0) {
+            setCurrentStep(stepIndex + 1);
+        } else if (!page) {
+            navigate(`/questionnaire?questStep=goals`, { replace: true });
         }
-    }, [page, location.pathname, navigate]);
-
-    useEffect(() => {
-        const step = page === "goals" ? 1 : page === "interests" ? 2 : 3;
-        setCurrentStep(step);
-    }, [page]);
+    }, [page, navigate]);
 
     return (
         <div>
             <div className="questionnaire-progress-bar-container">
-                <button
-                    className="back-button"
-                    onClick={() => {
-                        const steps = ["goals", "interests", "survey"];
-
-                        if (currentStep === 1) {
-                            setCurrentStep(3);
-
-                            navigate(`/questionnaire?questStep=survey`);
-                        } else if (currentStep > 1) {
-                            setCurrentStep(currentStep - 1);
-
-                            navigate(
-                                `/questionnaire?questStep=${
-                                    steps[currentStep - 2]
-                                }`
-                            );
-                        }
-                    }}
-                >
-                    <i class="ri-arrow-left-line"></i>
+                <button className="back-button" onClick={handleBackStep}>
+                    <i className="ri-arrow-left-line"></i>
                 </button>
                 <ProgressBar progress={progress} />
             </div>

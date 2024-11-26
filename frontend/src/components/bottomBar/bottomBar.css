@@ -23,6 +23,9 @@
     text-decoration: none;
     font-size: 1.5rem;
     transition: color 0.4s;
+
+    background-color: var(--black-color);
+    border: none;
 }
 
 .nav_link:hover {

@@ -32,32 +32,36 @@
     max-width: 300px;
 }
 
-.btn {
+.welcome-btn-primary,
+.welcome-btn-secondary {
+    width: 100%;
+    height: 45px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    margin-top: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
     padding: 15px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    transition: transform 0.2s ease;
     text-align: center;
 }
 
-.btn-primary {
-    background-color: #ffb300;
-    color: #fff;
+.welcome-btn-primary {
+    background: #ffb300;
+    color: white;
 }
 
-.btn-secondary {
+.welcome-btn-secondary {
     background-color: #ffffff;
     color: #ffb300;
     border: 2px solid #ffb300;
 }
 
-.btn:hover {
+.welcome-btn:hover {
     transform: scale(1.05);
 }

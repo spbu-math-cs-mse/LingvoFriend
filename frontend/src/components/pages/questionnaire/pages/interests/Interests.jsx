@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import ProgressBar from "../../progressBar/ProgressBar";
+import axios from "axios";
 import "../../questionnaire.css";
 
 import { ReactComponent as MusicIcon } from "./assets/headphones-round-sound-svgrepo-com.svg";
@@ -12,7 +11,7 @@ import { ReactComponent as CookingIcon } from "./assets/chef-svgrepo-com.svg";
 import { ReactComponent as TechIcon } from "./assets/connection-internet-communication-svgrepo-com.svg";
 import { ReactComponent as SpaceIcon } from "./assets/space-svgrepo-com.svg";
 
-const Interests = ({ progress, onNextStep, onSubmit }) => {
+const Interests = ({ username, progress, onNextStep, onSubmit }) => {
     const [selectedInterests, setSelectedInterests] = useState([]);
 
     const interests = [
@@ -34,8 +33,33 @@ const Interests = ({ progress, onNextStep, onSubmit }) => {
         );
     };
 
-    const handleSubmit = () => {
-        // onSubmit(selectedInterests);
+    const handleSubmit = async () => {
+        const serverUrl = process.env.REACT_APP_SERVER_URL || "";
+
+        try {
+            const requestBody = {
+                username: localStorage.getItem("username"),
+                interests: selectedInterests,
+            };
+
+            const response = await axios.post(
+                `${serverUrl}/api/questionnaire/saveInterests`,
+                requestBody,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            console.log("Ответ от сервера:", response.data);
+            onNextStep();
+        } catch (err) {
+            console.error(
+                "Ошибка при отправке данных:",
+                err.response ? err.response.data : err.message
+            );
+        }
     };
 
     return (
@@ -66,8 +90,7 @@ const Interests = ({ progress, onNextStep, onSubmit }) => {
                 <button
                     className="questionnaire-next-button"
                     onClick={() => {
-                        // handleSubmit();
-                        onNextStep();
+                        handleSubmit();
                     }}
                 >
                     Далее

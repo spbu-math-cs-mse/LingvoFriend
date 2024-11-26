@@ -7,6 +7,7 @@ import RegisterForm from "./components/authForm/RegisterForm";
 import Chat from "./components/pages/chat/Chat";
 import Store from "./components/pages/store/Store";
 import { useState } from "react";
+import Questionnaire from "./components/pages/questionnaire/Questionnaire";
 
 function App() {
     const [username, setUsername] = useState(null);
@@ -15,8 +16,12 @@ function App() {
         <Router>
             <Routes>
                 <Route path="/" element={<Welcome />} />
-                <Route path="/login" element={<LoginForm setUsername={setUsername} />} />
+                <Route
+                    path="/login"
+                    element={<LoginForm setUsername={setUsername} />}
+                />
                 <Route path="/register" element={<RegisterForm />} />
+                <Route path="/questionnaire" element={<Questionnaire />} />
                 <Route path="/home" element={<Home />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/chat" element={<Chat username={username} />} />
