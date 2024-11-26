@@ -21,7 +21,7 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
-class Controller {
+class LlmController {
 
     private final LlmRequest llmRequest;
     private final ChatService chatService;
@@ -29,7 +29,7 @@ class Controller {
     private final String API_KEY;
     private final String FOLDER_ID;
 
-    public Controller(LlmRequest llmRequest, ChatService chatService) {
+    public LlmController(LlmRequest llmRequest, ChatService chatService) {
         this.llmRequest = llmRequest;
         this.chatService = chatService;
 
@@ -38,8 +38,7 @@ class Controller {
         this.API_KEY = dotenv.get("API_KEY");
         this.FOLDER_ID = dotenv.get("FOLDER_ID");
     }
-    //uncomment for local tests
-    //@CrossOrigin(origins = "http://localhost:3000")
+
     @PostMapping("/llm")
     public Mono<ResponseEntity<String>> sendRequestToLLM(@RequestBody LlmRequestDto llmRequestDto)
             throws JsonProcessingException {
@@ -100,8 +99,6 @@ class Controller {
                         });
     }
 
-    //uncomment for local tests
-    //@CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/history/{username}")
     public ResponseEntity<List<Message>> getChatHistory(@PathVariable String username) {
         try {

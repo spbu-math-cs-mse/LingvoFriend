@@ -11,8 +11,10 @@ const LoginForm = ({ setUsername }) => {
     const handleLogin = async (e) => {
         e.preventDefault();
 
+        const serverUrl = process.env.REACT_APP_SERVER_URL || "";
+
         try {
-            const response = await fetch("/api/auth/login", {
+            const response = await fetch(`${serverUrl}/api/auth/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -21,8 +23,11 @@ const LoginForm = ({ setUsername }) => {
             });
 
             if (response.ok) {
-                setUsername(username);
-                console.log("Login successful:", username);
+                localStorage.setItem("username", username);
+                console.log(
+                    "Login successful:",
+                    localStorage.getItem("username")
+                );
                 navigate("/home");
             } else {
                 const errorMessage = await response.text();
@@ -63,14 +68,16 @@ const LoginForm = ({ setUsername }) => {
                         />
                         <FaLock className="icon" />
                     </div>
-                    <button type="submit">Вход</button>
+                    <button className="auth-btn-primary" type="submit">
+                        Вход
+                    </button>
 
                     <div className="divider">
                         <span>или</span>
                     </div>
 
                     <button
-                        className="register-button"
+                        className="auth-btn-secondary"
                         onClick={() => navigate("/register")}
                     >
                         Создать аккаунт

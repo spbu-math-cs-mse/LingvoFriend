@@ -11,8 +11,10 @@ const RegisterForm = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
 
+        const serverUrl = process.env.REACT_APP_SERVER_URL || "";
+
         try {
-            const response = await fetch("/api/auth/register", {
+            const response = await fetch(`${serverUrl}/api/auth/register`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -21,8 +23,12 @@ const RegisterForm = () => {
             });
 
             if (response.ok) {
-                console.log("Account created");
-                navigate("/");
+                localStorage.setItem("username", username);
+                console.log(
+                    "Account created:",
+                    localStorage.getItem("username")
+                );
+                navigate("/questionnaire");
             } else {
                 const errorMessage = await response.text();
                 alert(errorMessage);
@@ -62,14 +68,16 @@ const RegisterForm = () => {
                         />
                         <FaLock className="icon" />
                     </div>
-                    <button type="submit">Создать аккаунт</button>
+                    <button className="auth-btn-primary" type="submit">
+                        Создать аккаунт
+                    </button>
 
                     <div className="divider">
                         <span>или</span>
                     </div>
 
                     <button
-                        className="register-button"
+                        className="auth-btn-secondary"
                         onClick={() => navigate("/login")}
                     >
                         Войти в существующий

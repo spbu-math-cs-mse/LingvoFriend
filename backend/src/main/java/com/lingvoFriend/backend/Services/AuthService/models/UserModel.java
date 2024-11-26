@@ -17,24 +17,24 @@ import java.util.List;
 @Data
 @Document("Users")
 public class UserModel {
-    @Id
-    private String id;
+    @Id private String id;
 
     private String username;
     private String password;
 
-    @DBRef
-    private List<RoleModel> roles;
+    @DBRef private List<RoleModel> roles;
 
     private List<Message> messages;
 
-    // Add questionnaire fields
+    // current questionnaire fields
+    private List<String> goals;
+    private List<String> interests;
+
+    // up for debate
     private String name;
     private String gender;
     private Integer age;
-    private String goals;
     private String englishExperience;
-    private List<String> interests;
     private QuestionState questionState = QuestionState.NOT_STARTED;
 
     public UserModel(
@@ -49,7 +49,7 @@ public class UserModel {
         QuestionnaireResponse response = new QuestionnaireResponse();
         response.setUserId(id);
         response.setAge(age);
-        response.setGoals(goals);
+        response.setGoals(goals.toString());
         response.setGender(gender);
         response.setEnglishExperience(englishExperience);
         response.setInterests(interests);

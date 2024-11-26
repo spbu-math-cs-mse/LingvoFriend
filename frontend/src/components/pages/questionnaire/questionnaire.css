@@ -10,19 +10,22 @@
 }
 
 .back-button {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    align-items: center;
-    justify-content: center;
-    margin-right: 10px;
-    color: #333;
-    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
     width: auto;
     height: auto;
     padding: 0;
     margin: 0;
     margin-right: 10px;
+    background: transparent;
+    border: none;
+    color: #333;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
 }
 
 .ri-arrow-left-line {
@@ -68,19 +71,22 @@
 }
 
 .questionnaire-button {
+    width: 100%;
+    height: 70px;
+    background-color: white;
+    border: 2px solid #ffb300;
+    border-radius: 8px;
+    color: #333;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 15px 25px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
     display: flex;
     align-items: center;
     gap: 30px;
-    padding: 15px 25px;
-    font-size: 1.2rem;
-    height: 70px;
-    width: 100%;
-    border: 2px solid #ffb300;
-    border-radius: 8px;
-    background-color: white;
-    color: #333;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 20px;
 }
 
 .questionnaire-button.selected {
@@ -109,18 +115,21 @@
 }
 
 .questionnaire-next-button {
-    position: absolute;
-    right: 20px;
     width: 7%;
-    margin-right: 25%;
-    font-size: 1rem;
+    height: 45px;
+    background: #ffb300;
     border: none;
     border-radius: 8px;
-    background-color: #ffb300;
     color: white;
+    font-size: 1rem;
+    font-weight: bold;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: absolute;
+    right: 20px;
+    margin-right: 25%;
+    margin-top: 20px;
 }
 
 .questionnaire-next-button:hover {

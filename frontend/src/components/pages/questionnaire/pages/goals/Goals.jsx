@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import ProgressBar from "../../progressBar/ProgressBar";
+import axios from "axios";
 import "../../questionnaire.css";
 
 import { ReactComponent as TravelIcon } from "./assets/travel-bag-svgrepo-com.svg";
@@ -10,7 +9,7 @@ import { ReactComponent as ForFunIcon } from "./assets/party-popper-svgrepo-com.
 import { ReactComponent as BookIcon } from "./assets/book-gift-present-svgrepo-com.svg";
 import { ReactComponent as JobIcon } from "./assets/briefcase-svgrepo-com.svg";
 
-const Goals = ({ progress, onNextStep, onSubmit }) => {
+const Goals = ({ progress, onNextStep }) => {
     const [selectedGoals, setSelectedGoals] = useState([]);
 
     const goals = [
@@ -30,8 +29,33 @@ const Goals = ({ progress, onNextStep, onSubmit }) => {
         );
     };
 
-    const handleSubmit = () => {
-        // onSubmit(selectedGoals);
+    const handleSubmit = async () => {
+        const serverUrl = process.env.REACT_APP_SERVER_URL || "";
+
+        try {
+            const requestBody = {
+                username: localStorage.getItem("username"),
+                goals: selectedGoals,
+            };
+
+            const response = await axios.post(
+                `${serverUrl}/api/questionnaire/saveGoals`,
+                requestBody,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            console.log("Ответ от сервера:", response.data);
+            onNextStep();
+        } catch (err) {
+            console.error(
+                "Ошибка при отправке данных:",
+                err.response ? err.response.data : err.message
+            );
+        }
     };
 
     return (
@@ -62,8 +86,7 @@ const Goals = ({ progress, onNextStep, onSubmit }) => {
                 <button
                     className="questionnaire-next-button"
                     onClick={() => {
-                        // handleSubmit();
-                        onNextStep();
+                        handleSubmit();
                     }}
                 >
                     Далее

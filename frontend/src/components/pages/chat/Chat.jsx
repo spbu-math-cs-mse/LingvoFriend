@@ -11,20 +11,24 @@ const Chat = ({ username }) => {
     const chatEndRef = useRef(null);
     const [isLoading, setIsLoading] = useState(false);
 
+    const serverUrl = process.env.REACT_APP_SERVER_URL || "";
+
     useEffect(() => {
         const fetchChatHistory = async () => {
             try {
-                const response = await axios.get(`/api/history/${username}`);
+                const response = await axios.get(
+                    `${serverUrl}/api/history/${localStorage.getItem(
+                        "username"
+                    )}`
+                );
                 setMessages(response.data);
             } catch (error) {
                 console.error("Ошибка при загрузке истории чата:", error);
             }
         };
 
-        if (username) {
-            fetchChatHistory();
-        }
-    }, [username]);
+        fetchChatHistory();
+    }, []);
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -38,16 +42,21 @@ const Chat = ({ username }) => {
         setInput("");
         setIsLoading(true);
 
+        const serverUrl = process.env.REACT_APP_SERVER_URL || "";
+
         try {
             const requestBody = {
-                username,
+                username: localStorage.getItem("username"),
                 message: {
                     role: "user",
                     text: input,
                 },
             };
 
-            const response = await axios.post(`/api/llm`, requestBody);
+            const response = await axios.post(
+                `${serverUrl}/api/llm`,
+                requestBody
+            );
 
             const responseData =
                 typeof response.data === "string"
@@ -93,7 +102,9 @@ const Chat = ({ username }) => {
                         <div
                             key={index}
                             className={`message-bubble ${
-                                msg.role === "user" ? "user-message" : "assistant-message"
+                                msg.role === "user"
+                                    ? "user-message"
+                                    : "assistant-message"
                             }`}
                         >
                             {msg.role === "user" ? (
@@ -128,9 +139,7 @@ const Chat = ({ username }) => {
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 448 512"
                         >
-                            <path
-                                d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"
-                            />
+                            <path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" />
                         </svg>
                     </button>
                 </div>
