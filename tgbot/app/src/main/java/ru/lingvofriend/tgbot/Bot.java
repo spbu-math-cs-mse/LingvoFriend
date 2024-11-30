@@ -1,5 +1,6 @@
 package ru.lingvofriend.tgbot;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -11,10 +12,6 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -26,20 +23,9 @@ import ru.lingvofriend.tgbot.questionnaire.UserState;
 
 public class Bot extends TelegramLongPollingBot {
     public static void main(String[] argv) {
-        String token;
-        try {
-            token = loadToken();
-        } catch (IOException e) {
-            logger.fatal("failed to load tgbot token", e);
-            return;
-        }
-        String yandexApiKey;
-        try {
-            yandexApiKey = loadYandexApiKey();
-        } catch (IOException e) {
-            logger.fatal("failed to load yandex api key", e);
-            return;
-        }
+        Dotenv dotenv = Dotenv.load();
+        String token = dotenv.get("TGBOT_TOKEN");
+        String yandexApiKey = dotenv.get("YANDEXGPT_API_KEY");
         logger.info("starting lingvofriend tgbot...");
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
@@ -109,26 +95,6 @@ public class Bot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             logger.error("Failed to send message: {}", e.getMessage());
         }
-    }
-
-    private static String loadToken() throws IOException {
-        String tokenFile = System.getenv("LINGVOFRIEND_TGBOT_TOKEN_FILE");
-        if (tokenFile == null) {
-            throw new IOException("LINGVOFRIEND_TGBOT_TOKEN_FILE is not defined. Please define this environment variable - a path to a file containing tgbot token secret");
-        }
-        Path tokenPath = Paths.get(tokenFile);
-        String token = Files.readString(tokenPath).trim();
-        return token;
-    }
-
-    private static String loadYandexApiKey() throws IOException {
-        String keyFile = System.getenv("LINGVOFRIEND_YANDEXGPT_API_KEY_FILE");
-        if (keyFile == null) {
-            throw new IOException("LINGVOFRIEND_YANDEXGPT_API_KEY_FILE is not defined. Please define this environment variable - a path to a file containing Yandex API key secret");
-        }
-        Path keyPath = Paths.get(keyFile);
-        String key = Files.readString(keyPath).trim();
-        return key;
     }
 
     private final String token;

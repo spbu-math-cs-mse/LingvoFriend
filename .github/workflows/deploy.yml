@@ -28,6 +28,4 @@ jobs:
           SCRIPT_AFTER_REQUIRED: true
           SCRIPT_AFTER: |
             cd /home/github-ci/LingvoFriend
-            LINGVOFRIEND_TGBOT_TOKEN=${{ secrets.LINGVOFRIEND_TGBOT_TOKEN }} \
-            LINGVOFRIEND_YANDEXGPT_API_KEY=${{ secrets.LINGVOFRIEND_YANDEXGPT_API_KEY }} \
             sudo -E docker compose up -d --build
