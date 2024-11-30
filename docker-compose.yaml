@@ -32,21 +32,9 @@ services:
   tgbot:
     build: ./tgbot/
     container_name: lingvofriend-tgbot
-    secrets:
-      - tgbot_token
-      - yandexgpt_api_key
-    environment:
-      LINGVOFRIEND_TGBOT_TOKEN_FILE: /run/secrets/tgbot_token
-      LINGVOFRIEND_YANDEXGPT_API_KEY_FILE: /run/secrets/yandexgpt_api_key
 volumes:
   data: {}
 
 networks:
   default:
     name: mongodb_network
-
-secrets:
-  tgbot_token:
-    environment: "LINGVOFRIEND_TGBOT_TOKEN"
-  yandexgpt_api_key:
-    environment: "LINGVOFRIEND_YANDEXGPT_API_KEY"

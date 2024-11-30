@@ -24,6 +24,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-api:2.24.1")
     implementation("com.squareup.okhttp3:okhttp:4.9.1")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("io.github.cdimascio:dotenv-java:3.0.0")
     runtimeOnly("org.apache.logging.log4j:log4j-core:2.24.1")
     runtimeOnly("org.apache.logging.log4j:log4j-slf4j2-impl:2.24.1")
 }
