@@ -5,17 +5,18 @@ import com.lingvoFriend.backend.Services.ChatService.ChatService;
 import com.lingvoFriend.backend.Services.ChatService.LlmRequest;
 import com.lingvoFriend.backend.Services.ChatService.dto.LlmRequestDto;
 import com.lingvoFriend.backend.Services.ChatService.models.LlmRequestModel;
+import com.lingvoFriend.backend.Services.ChatService.models.LlmResponseModel;
 import com.lingvoFriend.backend.Services.ChatService.models.Message;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
-
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Objects;
@@ -24,13 +25,17 @@ import java.util.Objects;
 @RequestMapping("/api")
 class ChatController {
 
+    private final RestTemplate restTemplate;
     private final LlmRequest llmRequest;
     private final ChatService chatService;
     private final String MODEL_URI;
     private final String API_KEY;
     private final String FOLDER_ID;
 
-    public ChatController(LlmRequest llmRequest, ChatService chatService) {
+    @Autowired
+    public ChatController(
+            RestTemplate restTemplate, LlmRequest llmRequest, ChatService chatService) {
+        this.restTemplate = restTemplate;
         this.llmRequest = llmRequest;
         this.chatService = chatService;
 
@@ -41,63 +46,53 @@ class ChatController {
     }
 
     @PostMapping("/llm")
-    public Mono<ResponseEntity<String>> sendRequestToLLM(@RequestBody LlmRequestDto llmRequestDto)
+    public ResponseEntity<String> sendRequestToLLM(@RequestBody LlmRequestDto llmRequestDto)
             throws JsonProcessingException {
 
-        Dotenv dotenv = Dotenv.load();
-
         if (!(Objects.equals(llmRequestDto.getMessage().getRole(), "user")
-                || (Objects.equals(llmRequestDto.getMessage().getRole(), "system")))) {
-            return Mono.just(
-                    ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad message role"));
+                || Objects.equals(llmRequestDto.getMessage().getRole(), "system"))) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad message role");
         }
 
-        return Mono.defer(
-                        () -> {
-                            List<Message> updatedMessages =
-                                    chatService.addMessageToUser(
-                                            llmRequestDto.getUsername(),
-                                            llmRequestDto.getMessage());
+        return processRequest(llmRequestDto);
+    }
 
-                            if (Objects.equals(llmRequestDto.getMessage().getRole(), "system")) {
-                                return Mono.just(
-                                        ResponseEntity.status(HttpStatus.CREATED)
-                                                .body("System message successfully saved"));
-                            }
+    public ResponseEntity<String> processRequest(LlmRequestDto llmRequestDto)
+            throws JsonProcessingException {
+        try {
+            List<Message> updatedMessages =
+                    chatService.addMessageToUser(
+                            llmRequestDto.getUsername(), llmRequestDto.getMessage());
 
-                            LlmRequestModel request =
-                                    new LlmRequestModel(
-                                            MODEL_URI,
-                                            new LlmRequestModel.CompletionOptions(
-                                                    false, 0.6, "2000"),
-                                            updatedMessages);
+            if (Objects.equals(llmRequestDto.getMessage().getRole(), "system")) {
+                return ResponseEntity.status(HttpStatus.CREATED)
+                        .body("System message successfully saved");
+            }
 
-                            return llmRequest
-                                    .sendPostRequest(API_KEY, FOLDER_ID, request)
-                                    .map(
-                                            res -> {
-                                                Message msg =
-                                                        res.getResult()
-                                                                .getAlternatives()
-                                                                .get(0)
-                                                                .getMessage();
+            LlmRequestModel request =
+                    new LlmRequestModel(
+                            MODEL_URI,
+                            new LlmRequestModel.CompletionOptions(false, 0.6, "2000"),
+                            updatedMessages);
 
-                                                chatService.addMessageToUser(
-                                                        llmRequestDto.getUsername(), msg);
-                                                return ResponseEntity.ok(msg.getText());
-                                            });
-                        })
-                .onErrorResume(
-                        e -> {
-                            if (e instanceof BadCredentialsException) {
-                                return Mono.just(
-                                        ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                                                .body(e.getMessage()));
-                            }
-                            return Mono.just(
-                                    ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                            .body("An unexpected error occurred"));
-                        });
+            LlmResponseModel response = llmRequest.sendPostRequest(API_KEY, FOLDER_ID, request);
+
+            if (response != null && response.getResult() != null) {
+                Message msg = response.getResult().getAlternatives().get(0).getMessage();
+                chatService.addMessageToUser(llmRequestDto.getUsername(), msg);
+                return ResponseEntity.ok(msg.getText());
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Empty response from LLM API");
+            }
+
+        } catch (Exception e) {
+            if (e instanceof BadCredentialsException) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An unexpected error occurred");
+        }
     }
 
     @GetMapping("/history/{username}")

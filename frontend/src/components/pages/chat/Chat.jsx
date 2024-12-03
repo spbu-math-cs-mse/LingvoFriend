@@ -84,9 +84,14 @@ const Chat = () => {
                 `${serverUrl}/api/llm`,
                 requestBody,
                 {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
                     withCredentials: true,
                 }
             );
+
+            console.log("im here");
 
             const responseData =
                 typeof response.data === "string"
