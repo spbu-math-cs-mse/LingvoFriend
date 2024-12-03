@@ -19,15 +19,11 @@ const LoginForm = ({ setUsername }) => {
                 headers: {
                     "Content-Type": "application/json",
                 },
+                credentials: "include",
                 body: JSON.stringify({ username, password }),
             });
 
             if (response.ok) {
-                localStorage.setItem("username", username);
-                console.log(
-                    "Login successful:",
-                    localStorage.getItem("username")
-                );
                 navigate("/home");
             } else {
                 const errorMessage = await response.text();

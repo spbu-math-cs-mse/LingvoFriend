@@ -9,6 +9,7 @@ import com.lingvoFriend.backend.Services.ChatService.models.Message;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,7 +22,7 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
-class LlmController {
+class ChatController {
 
     private final LlmRequest llmRequest;
     private final ChatService chatService;
@@ -29,7 +30,7 @@ class LlmController {
     private final String API_KEY;
     private final String FOLDER_ID;
 
-    public LlmController(LlmRequest llmRequest, ChatService chatService) {
+    public ChatController(LlmRequest llmRequest, ChatService chatService) {
         this.llmRequest = llmRequest;
         this.chatService = chatService;
 
@@ -100,7 +101,8 @@ class LlmController {
     }
 
     @GetMapping("/history/{username}")
-    public ResponseEntity<List<Message>> getChatHistory(@PathVariable String username) {
+    public ResponseEntity<List<Message>> getChatHistory(
+            HttpServletRequest request, @PathVariable String username) {
         try {
             List<Message> messages = chatService.getMessagesByUsername(username);
             return ResponseEntity.ok(messages);
@@ -110,7 +112,4 @@ class LlmController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
-    @GetMapping("/test")
-    public void test() {}
 }

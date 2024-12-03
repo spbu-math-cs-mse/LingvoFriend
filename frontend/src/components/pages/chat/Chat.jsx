@@ -5,8 +5,9 @@ import remarkGfm from "remark-gfm";
 import BottomBar from "../../bottomBar/BottomBar";
 import "./chat.css";
 
-const Chat = ({ username }) => {
+const Chat = () => {
     const [messages, setMessages] = useState([]);
+    const [username, setUsername] = useState(null);
     const [input, setInput] = useState("");
     const chatEndRef = useRef(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -14,12 +15,36 @@ const Chat = ({ username }) => {
     const serverUrl = process.env.REACT_APP_SERVER_URL || "";
 
     useEffect(() => {
-        const fetchChatHistory = async () => {
+        const fetchUsername = async () => {
             try {
                 const response = await axios.get(
-                    `${serverUrl}/api/history/${localStorage.getItem(
-                        "username"
-                    )}`
+                    `${serverUrl}/api/jwt/username`,
+                    {
+                        withCredentials: true,
+                    }
+                );
+
+                setUsername(response.data);
+            } catch (error) {
+                console.error("Ошибка при получении username:", error);
+            }
+        };
+
+        fetchUsername();
+    }, [serverUrl]);
+
+    useEffect(() => {
+        const fetchChatHistory = async () => {
+            if (!username) {
+                return;
+            }
+
+            try {
+                const response = await axios.get(
+                    `${serverUrl}/api/history/${username}`,
+                    {
+                        withCredentials: true,
+                    }
                 );
                 setMessages(response.data);
             } catch (error) {
@@ -27,8 +52,10 @@ const Chat = ({ username }) => {
             }
         };
 
-        fetchChatHistory();
-    }, []);
+        if (username) {
+            fetchChatHistory();
+        }
+    }, [username, serverUrl]);
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -46,7 +73,7 @@ const Chat = ({ username }) => {
 
         try {
             const requestBody = {
-                username: localStorage.getItem("username"),
+                username: username,
                 message: {
                     role: "user",
                     text: input,
@@ -55,7 +82,10 @@ const Chat = ({ username }) => {
 
             const response = await axios.post(
                 `${serverUrl}/api/llm`,
-                requestBody
+                requestBody,
+                {
+                    withCredentials: true,
+                }
             );
 
             const responseData =
