@@ -64,7 +64,7 @@ public class AuthService {
 
         String token = jwtGenerator.generateToken(authentication);
 
-        Cookie cookie = new Cookie("_Host-auth-token", token);
+        Cookie cookie = new Cookie("__Host-auth-token", token);
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/");

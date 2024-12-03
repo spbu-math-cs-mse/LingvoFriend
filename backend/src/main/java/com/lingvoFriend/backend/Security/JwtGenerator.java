@@ -54,7 +54,7 @@ public class JwtGenerator {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("_Host-auth-token".equals(cookie.getName())) {
+                if ("__Host-auth-token".equals(cookie.getName())) {
                     return cookie.getValue();
                 }
             }

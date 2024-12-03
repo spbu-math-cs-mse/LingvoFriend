@@ -17,19 +17,19 @@ public class JwtController {
     private final AuthService authService;
 
     @GetMapping("/validate")
-    public ResponseEntity<String> validateToken(@CookieValue("_Host-auth-token") String token) {
+    public ResponseEntity<String> validateToken(@CookieValue("__Host-auth-token") String token) {
         return authService.validateToken(token);
     }
 
     @GetMapping("/username")
     public ResponseEntity<String> getUsernameFromToken(
-            @CookieValue("_Host-auth-token") String token) {
+            @CookieValue("__Host-auth-token") String token) {
         return authService.getUsernameFromToken(token);
     }
 
     @GetMapping("/clear")
     public ResponseEntity<String> clearToken(HttpServletResponse response) {
-        Cookie cookie = new Cookie("_Host-auth-token", null);
+        Cookie cookie = new Cookie("__Host-auth-token", null);
         cookie.setMaxAge(0);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
