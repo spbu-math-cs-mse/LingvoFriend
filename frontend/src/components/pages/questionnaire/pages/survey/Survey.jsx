@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import ProgressBar from "../../progressBar/ProgressBar";
 import "../../questionnaire.css";
 
 import { ReactComponent as NewsPaperIcon } from "./assets/newspaper-svgrepo-com.svg";

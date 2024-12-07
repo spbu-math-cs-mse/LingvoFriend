@@ -19,15 +19,11 @@ const RegisterForm = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
+                credentials: "include",
                 body: JSON.stringify({ username, password }),
             });
 
             if (response.ok) {
-                localStorage.setItem("username", username);
-                console.log(
-                    "Account created:",
-                    localStorage.getItem("username")
-                );
                 navigate("/questionnaire");
             } else {
                 const errorMessage = await response.text();

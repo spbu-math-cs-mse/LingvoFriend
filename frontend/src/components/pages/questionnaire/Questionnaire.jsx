@@ -24,7 +24,7 @@ function Questionnaire() {
             setCurrentStep(currentStep + 1);
             navigate(`/questionnaire?questStep=${nextStep}`);
         } else {
-            navigate("/home");
+            navigate("/chat");
         }
     };
 

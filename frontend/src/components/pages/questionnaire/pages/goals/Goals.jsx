@@ -33,28 +33,34 @@ const Goals = ({ progress, onNextStep }) => {
         const serverUrl = process.env.REACT_APP_SERVER_URL || "";
 
         try {
+            const usernameResponse = await axios.get(
+                `${serverUrl}/api/jwt/username`,
+                {
+                    withCredentials: true,
+                }
+            );
+
+            const username = usernameResponse.data;
+
             const requestBody = {
-                username: localStorage.getItem("username"),
+                username: username,
                 goals: selectedGoals,
             };
 
-            const response = await axios.post(
+            await axios.post(
                 `${serverUrl}/api/questionnaire/saveGoals`,
                 requestBody,
                 {
                     headers: {
                         "Content-Type": "application/json",
                     },
+                    withCredentials: true,
                 }
             );
 
-            console.log("Ответ от сервера:", response.data);
             onNextStep();
         } catch (err) {
-            console.error(
-                "Ошибка при отправке данных:",
-                err.response ? err.response.data : err.message
-            );
+            console.error("Ошибка при отправке данных:", err.message);
         }
     };
 
