@@ -91,8 +91,6 @@ const Chat = () => {
                 }
             );
 
-            console.log("im here");
-
             const responseData =
                 typeof response.data === "string"
                     ? { text: response.data.replace(/\\n/g, "\n") }

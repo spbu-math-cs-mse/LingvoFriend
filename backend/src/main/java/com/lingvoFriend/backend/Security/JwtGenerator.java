@@ -13,18 +13,19 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.Duration;
 import java.util.Date;
 
 @Component
 public class JwtGenerator {
 
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
-    private final long JWT_EXPIRATION_TIME = 7 * 24 * 60 * 60 * 1000; // time in milliseconds
+    public static final Duration JWT_EXPIRATION_TIME = Duration.ofDays(7);
 
     public String generateToken(Authentication auth) {
         String username = auth.getName();
         Date currentDate = new Date();
-        Date expirationDate = new Date(currentDate.getTime() + JWT_EXPIRATION_TIME);
+        Date expirationDate = new Date(currentDate.getTime() + JWT_EXPIRATION_TIME.toMillis());
 
         String token =
                 Jwts.builder()

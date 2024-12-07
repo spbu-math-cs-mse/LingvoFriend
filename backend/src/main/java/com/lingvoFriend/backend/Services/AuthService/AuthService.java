@@ -68,7 +68,7 @@ public class AuthService {
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/");
-        cookie.setMaxAge(7 * 24 * 60 * 60);
+        cookie.setMaxAge((int) JwtGenerator.JWT_EXPIRATION_TIME.toSeconds());
 
         response.addCookie(cookie);
 
