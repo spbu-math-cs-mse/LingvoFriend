@@ -3,6 +3,7 @@ import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import BottomBar from "../../bottomBar/BottomBar";
+import ReactTooltip from "react-tooltip";
 import "./chat.css";
 
 const Chat = () => {
@@ -11,6 +12,8 @@ const Chat = () => {
     const [input, setInput] = useState("");
     const chatEndRef = useRef(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [translations, setTranslations] = useState({});
+    const [loadingWords, setLoadingWords] = useState({});
 
     const serverUrl = process.env.REACT_APP_SERVER_URL || "";
 
@@ -127,6 +130,91 @@ const Chat = () => {
         setInput(textarea.value);
     };
 
+    const handleWordClick = async (word) => {
+        if (translations[word]) {
+            return;
+        }
+
+        setLoadingWords((prev) => ({ ...prev, [word]: true }));
+
+        try {
+            const response = await axios.post("https://api-free.deepl.com/v2/translate", null, {
+                params: {
+                    auth_key: "805412aa-0cfc-4096-b255-74aaf6f8fbae:fx",
+                    text: word,
+                    target_lang: "RU",
+                    source_lang: "EN"
+                },
+            });
+
+            const translatedText = response.data.translations[0].text;
+            setTranslations((prev) => ({ ...prev, [word]: translatedText }));
+        } catch (error) {
+            console.error("Translation error:", error);
+            setTranslations((prev) => ({ ...prev, [word]: "Translation unavailable" }));
+        } finally {
+            setLoadingWords((prev) => ({ ...prev, [word]: false }));
+        }
+    };
+
+    const extractText = (children) => {
+        if (typeof children === "string") {
+            return children;
+        }
+        if (Array.isArray(children)) {
+            return children.map(child => extractText(child)).join(" ");
+        }
+        if (children.props && children.props.children) {
+            return extractText(children.props.children);
+        }
+        return "";
+    };
+
+    useEffect(() => {
+        ReactTooltip.rebuild();
+    }, [messages, translations, loadingWords]);
+
+    const renderMessage = (text) => {
+        const messageText = extractText(text) || "";
+
+        const wordsAndPunctuations = messageText.split(/(\s+|[.,!?;:()])/);
+
+        return wordsAndPunctuations.map((segment, index) => {
+            if (segment.trim() === "" || /[.,!?;:()]/.test(segment)) {
+                return segment;
+            }
+
+            const translation = translations[segment];
+            const isLoadingWord = loadingWords[segment];
+            const tooltipId = `tooltip-${index}-${segment}`;
+
+            return (
+                <span
+                    key={index}
+                    className="clickable-word"
+                    onMouseOver={() => handleWordClick(segment)}
+                    data-tip
+                    data-for={tooltipId}
+                    data-event="click"
+                >
+                    {segment}
+                    <ReactTooltip
+                        id={tooltipId}
+                        place="top"
+                        effect="solid"
+                        className="tooltip-translation"
+                    >
+                        {isLoadingWord
+                            ? "Loading..."
+                            : translation
+                                ? translation
+                                : "error"}
+                    </ReactTooltip>
+                </span>
+            );
+        });
+    };
+
     return (
         <div>
             <div className="chat-container">
@@ -141,11 +229,14 @@ const Chat = () => {
                             }`}
                         >
                             {msg.role === "user" ? (
-                                msg.text
+                                renderMessage(msg.text)
                             ) : (
                                 <ReactMarkdown
                                     children={msg.text}
                                     remarkPlugins={[remarkGfm]}
+                                    components={{
+                                        p: ({ node, ...props }) => <p>{renderMessage(props.children)}</p>,
+                                    }}
                                 />
                             )}
                         </div>
