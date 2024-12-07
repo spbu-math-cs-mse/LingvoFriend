@@ -5,7 +5,7 @@ import com.lingvoFriend.backend.Services.ChatService.models.Message;
 import lombok.Data;
 
 @Data
-public class LlmRequestDto {
+public class UserMessageDto {
     private String username;
     private Message message;
 }
