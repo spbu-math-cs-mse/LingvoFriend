@@ -1,39 +1,47 @@
 package com.lingvoFriend.backend.Services.ChatService;
 
-import com.lingvoFriend.backend.Repositories.UserRepository;
-import com.lingvoFriend.backend.Services.ChatService.models.Message;
 import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
-import lombok.AllArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
+import com.lingvoFriend.backend.Services.ChatService.dto.UserMessageDto;
+import com.lingvoFriend.backend.Services.ChatService.models.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
-@AllArgsConstructor
 public class ChatService {
+    public String chat(UserMessageDto userMessageDto) {
+        UserModel user = userService.findOrThrow(userMessageDto.getUsername());
+        userService.addMessageToUser(user, userMessageDto.getMessage());
 
-    private final UserRepository userRepository;
+        if (userMessageDto.getMessage().isSystem())
+            return "successfully added system message";
 
-    public List<Message> addMessageToUser(String username, Message message) {
-        Optional<UserModel> User = userRepository.findByUsername(username);
-
-        User.ifPresentOrElse(
-                user -> {
-                    user.getMessages().add(message);
-                    userRepository.save(user);
-                },
-                () -> {
-                    throw new BadCredentialsException("User not found");
-                });
-        return User.get().getMessages();
+        Message llmMessage = generateResponseImpl(user);
+        userService.addMessageToUser(user, llmMessage);
+        return llmMessage.getText();
     }
 
-    public List<Message> getMessagesByUsername(String username) {
-        Optional<UserModel> user = userRepository.findByUsername(username);
-
-        return user.map(UserModel::getMessages)
-                   .orElseThrow(() -> new BadCredentialsException("User not found"));
+    public List<Message> getHistory(String username) {
+        UserModel user = userService.findOrThrow(username);
+        return user.getMessages();
     }
+
+    private Message generateResponseImpl(UserModel user) {
+        if (!languageLevelService.isEvaluated(user)) {
+            logger.info("User {} is not evaluated. Delegating to LanguageLevelService", user.getName());
+            return languageLevelService.evaluate(user);
+        }
+        return llmService.generateLlmResponse(user);
+    }
+
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private LlmService llmService;
+    @Autowired
+    private LanguageLevelService languageLevelService;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 }

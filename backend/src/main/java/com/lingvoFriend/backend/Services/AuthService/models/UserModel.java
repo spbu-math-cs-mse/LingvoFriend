@@ -37,6 +37,9 @@ public class UserModel {
     private String englishExperience;
     private QuestionState questionState = QuestionState.NOT_STARTED;
 
+    private Integer levelEvaluationQuestionsAsked = 0;
+    private String cefrLevel;
+
     public UserModel(
             String username, String password, List<RoleModel> roles, List<Message> messages) {
         this.username = username;

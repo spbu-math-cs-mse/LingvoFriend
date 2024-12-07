@@ -46,7 +46,16 @@ const Chat = () => {
                         withCredentials: true,
                     }
                 );
-                setMessages(response.data);
+                const chatHistory = response.data;
+                if (chatHistory.length === 0) {
+                    const welcomeMessage = {
+                        role: "assistant",
+                        text: "Привет! Давай пройдем небольшой тест на знание английского языка? Отвечай максимально подробно, чтобы я мог лучше оценить твой уровень языка ;)",
+                    };
+                    setMessages([welcomeMessage]);
+                } else {
+                    setMessages(chatHistory);
+                }
             } catch (error) {
                 console.error("Ошибка при загрузке истории чата:", error);
             }
