@@ -10,6 +10,7 @@ import jakarta.annotation.PostConstruct;
 
 import lombok.AllArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,7 @@ import java.util.List;
 
 // here we just fill up the database with default user and roles in case its empty
 
+@Slf4j
 @Component
 @AllArgsConstructor
 public class Initializer {
@@ -40,6 +42,7 @@ public class Initializer {
     @PostConstruct
     void defaultUserInit() {
         if (!userRepository.existsByUsername("admin")) {
+            log.info("Init users DB");
             List<RoleModel> ListOfDefaultRoles =
                     new ArrayList<>(
                             List.of(
