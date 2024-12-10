@@ -1,16 +1,17 @@
 package com.lingvoFriend.backend.Services.AuthService.models;
 
 import com.lingvoFriend.backend.Services.ChatService.models.Message;
+import com.lingvoFriend.backend.Services.ChatService.models.Word;
 import com.lingvoFriend.backend.Services.QuestionnaireService.QuestionState;
-
 import com.lingvoFriend.backend.Services.QuestionnaireService.QuestionnaireResponse;
+
 import lombok.Data;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
+import java.util.*;
 
 // users table in database
 
@@ -25,6 +26,8 @@ public class UserModel {
     @DBRef private List<RoleModel> roles;
 
     private List<Message> messages;
+
+    private TreeSet<Word> unknownWords = new TreeSet<>(Comparator.comparing(Word::getTime));
 
     // current questionnaire fields
     private List<String> goals;

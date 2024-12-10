@@ -1,7 +1,9 @@
 package com.lingvoFriend.backend.Controllers;
 
 import com.lingvoFriend.backend.Services.ChatService.ChatService;
+import com.lingvoFriend.backend.Services.ChatService.WordsReminderService;
 import com.lingvoFriend.backend.Services.ChatService.dto.UserMessageDto;
+import com.lingvoFriend.backend.Services.ChatService.dto.WordsReminderDto;
 import com.lingvoFriend.backend.Services.ChatService.models.Message;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,22 +20,34 @@ import java.util.Objects;
 @RequestMapping("/api")
 class ChatController {
 
-    @Autowired
-    private ChatService chatService;
+    @Autowired private ChatService chatService;
+    @Autowired private WordsReminderService wordsReminderService;
 
     @PostMapping("/llm")
     public ResponseEntity<String> chat(@RequestBody UserMessageDto userMessageDto) {
         if (!(Objects.equals(userMessageDto.getMessage().getRole(), "user")
-            || Objects.equals(userMessageDto.getMessage().getRole(), "system"))) {
+                || Objects.equals(userMessageDto.getMessage().getRole(), "system"))) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad message role");
         }
 
         return processRequest(userMessageDto);
     }
 
+    @PostMapping("/saveUnknownWord")
+    public ResponseEntity<String> saveUnknownWord(@RequestBody WordsReminderDto wordsReminderDto) {
+        try {
+            wordsReminderService.saveUnknownWord(wordsReminderDto);
+            return ResponseEntity.ok("Word successfully saved");
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
     @GetMapping("/history/{username}")
     public ResponseEntity<List<Message>> getChatHistory(
-        HttpServletRequest request, @PathVariable String username) {
+            HttpServletRequest request, @PathVariable String username) {
         try {
             List<Message> messages = chatService.getHistory(username);
             return ResponseEntity.ok(messages);
@@ -54,5 +68,4 @@ class ChatController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-
 }
