@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class LlmReminderService {
     public void sendSystemReminder(UserModel user) {
-        String userGoals = userService.constructUserGoals(user);
-        String userPreferences = userService.constructUserPreferences(user);
+        String userGoals = userService.constructUserGoalsString(user);
+        String userPreferences = userService.constructUserPreferencesString(user);
 
         String prompt = "Remember that you need to chat with user in English. " +
                     "You should not answer him in other languages except the situations when user asks for in explicitly (for example, when he asks for word translations, you can answer in Russian). " +

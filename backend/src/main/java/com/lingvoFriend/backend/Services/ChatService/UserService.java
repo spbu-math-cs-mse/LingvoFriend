@@ -32,7 +32,7 @@ public class UserService {
         return userRepository;
     }
 
-    public String constructUserGoals(UserModel user) {
+    public String constructUserGoalsString(UserModel user) {
         List<String> goals = user.getGoals();
         StringJoiner joiner = new StringJoiner(", ");
         for (String goal : goals) {
@@ -41,7 +41,7 @@ public class UserService {
         return joiner.toString();
     }
 
-    public String constructUserPreferences(UserModel user) {
+    public String constructUserPreferencesString(UserModel user) {
         List<String> interests = user.getInterests();
         StringJoiner joiner = new StringJoiner(", ");
         for (String interest : interests) {
