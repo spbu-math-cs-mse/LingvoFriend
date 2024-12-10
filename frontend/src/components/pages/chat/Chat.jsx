@@ -147,20 +147,39 @@ const Chat = () => {
         setLoadingWords((prev) => ({ ...prev, [word]: true }));
 
         try {
-            const response = await axios.post("https://api-free.deepl.com/v2/translate", null, {
-                params: {
-                    auth_key: "805412aa-0cfc-4096-b255-74aaf6f8fbae:fx",
-                    text: word,
-                    target_lang: "RU",
-                    source_lang: "EN"
+            const response = await axios.post(
+                "https://api-free.deepl.com/v2/translate",
+                null,
+                {
+                    params: {
+                        auth_key: "805412aa-0cfc-4096-b255-74aaf6f8fbae:fx",
+                        text: word,
+                        target_lang: "RU",
+                        source_lang: "EN",
+                    },
+                }
+            );
+
+            const requestBody = {
+                username: username,
+                word: word,
+            };
+
+            await axios.post(`${serverUrl}/api/saveUnknownWord`, requestBody, {
+                headers: {
+                    "Content-Type": "application/json",
                 },
+                withCredentials: true,
             });
 
             const translatedText = response.data.translations[0].text;
             setTranslations((prev) => ({ ...prev, [word]: translatedText }));
         } catch (error) {
             console.error("Translation error:", error);
-            setTranslations((prev) => ({ ...prev, [word]: "Translation unavailable" }));
+            setTranslations((prev) => ({
+                ...prev,
+                [word]: "Translation unavailable",
+            }));
         } finally {
             setLoadingWords((prev) => ({ ...prev, [word]: false }));
         }
@@ -171,7 +190,7 @@ const Chat = () => {
             return children;
         }
         if (Array.isArray(children)) {
-            return children.map(child => extractText(child)).join(" ");
+            return children.map((child) => extractText(child)).join(" ");
         }
         if (children.props && children.props.children) {
             return extractText(children.props.children);
@@ -201,10 +220,9 @@ const Chat = () => {
                 <span
                     key={index}
                     className="clickable-word"
-                    onMouseOver={() => handleWordClick(segment)}
+                    onClick={() => handleWordClick(segment)}
                     data-tip
                     data-for={tooltipId}
-                    data-event="click"
                 >
                     {segment}
                     <ReactTooltip
@@ -216,8 +234,8 @@ const Chat = () => {
                         {isLoadingWord
                             ? "Loading..."
                             : translation
-                                ? translation
-                                : "error"}
+                            ? translation
+                            : "Нажмите на слово, чтобы перевести"}
                     </ReactTooltip>
                 </span>
             );
@@ -244,7 +262,11 @@ const Chat = () => {
                                     children={msg.text}
                                     remarkPlugins={[remarkGfm]}
                                     components={{
-                                        p: ({ node, ...props }) => <p>{renderMessage(props.children)}</p>,
+                                        p: ({ node, ...props }) => (
+                                            <p>
+                                                {renderMessage(props.children)}
+                                            </p>
+                                        ),
                                     }}
                                 />
                             )}
