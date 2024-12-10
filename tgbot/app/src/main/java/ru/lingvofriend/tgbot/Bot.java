@@ -31,21 +31,30 @@ public class Bot extends TelegramLongPollingBot {
     public static void main(String[] argv) {
         Dotenv dotenv = Dotenv.load();
         String token = dotenv.get("TGBOT_TOKEN");
-        String yandexApiKey = dotenv.get("YANDEXGPT_API_KEY");
+        String backendUrl = dotenv.get("BACKEND_URL");
         logger.info("starting lingvofriend tgbot...");
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-            botsApi.registerBot(new Bot(token, yandexApiKey));
+            botsApi.registerBot(new Bot(token, backendUrl));
         } catch (TelegramApiException e) {
             logger.fatal("telegram api exception", e);
         }
     }
 
-    public Bot(String token, String yandexApiKey) {
+    public Bot(String token, String backendUrl) {
         super(token);
         this.token = token;
-        this.gptClient = yandexApiKey != null ? new YandexGPTClient(yandexApiKey) : null;
+        this.backendUrl = backendUrl;
+        this.backendClient = new BackendApiClient(backendUrl);
         this.questionnaireHandler = new QuestionnaireHandler(userStates, userResponses, this);
+
+        try {
+            Dotenv dotenv = Dotenv.load();
+            this.backendClient.login(dotenv.get("BACKEND_USERNAME"), dotenv.get("BACKEND_PASSWORD"));
+            logger.info("Logged in succesfully");
+        } catch (Exception e) {
+            logger.error("Failed to login to backend: {}", e.getMessage());
+        }
     }
 
     @Override
@@ -109,11 +118,16 @@ public class Bot extends TelegramLongPollingBot {
                 logger.error("Failed to send message with keyboard: {}", e.getMessage());
             }
             return;
+        } else if (usersInChatMode.contains(chatId)) {
+            try {
+                response = backendClient.sendMessage(userMessage);
+            } catch (Exception e) {
+                logger.error("Failed to get response from backend: {}", e.getMessage());
+                response = "Sorry, I'm having trouble understanding you. Please try again later.";
+            }
         } else if (userMessage.equals("Опрос") || userMessage.equals("/questionnaire")) {
             questionnaireHandler.handleResponse(chatId, "/questionnaire");
             return;
-        } else if (gptClient != null && usersInChatMode.contains(chatId)) {
-            response = gptClient.generateResponse(userMessage);
         } else {
             response = "Use /chat to start chatting with AI";
         }
@@ -129,7 +143,8 @@ public class Bot extends TelegramLongPollingBot {
     }
 
     private final String token;
-    private final YandexGPTClient gptClient;
+    private final String backendUrl;
+    private final BackendApiClient backendClient;
     private static final Logger logger = LogManager.getLogger();
     private final Set<Long> usersInChatMode = new HashSet<>();
 
