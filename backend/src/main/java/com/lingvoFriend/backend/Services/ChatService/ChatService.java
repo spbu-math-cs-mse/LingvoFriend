@@ -1,16 +1,16 @@
 package com.lingvoFriend.backend.Services.ChatService;
 
-import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
-import com.lingvoFriend.backend.Services.ChatService.dto.UserMessageDto;
-import com.lingvoFriend.backend.Services.ChatService.models.Message;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
+import com.lingvoFriend.backend.Services.ChatService.dto.UserMessageDto;
+import com.lingvoFriend.backend.Services.ChatService.models.Message;
 
 @Service
 public class ChatService {
@@ -37,6 +37,21 @@ public class ChatService {
         return user.getMessages().stream()
                 .filter(message -> !message.isSystem())
                 .collect(Collectors.toList());
+    }
+
+    public List<String> getGoals(String username) {
+        UserModel user = userService.findOrThrow(username);
+        return user.getGoals(); 
+    }
+
+    public List<String> getInterests(String username) {
+        UserModel user = userService.findOrThrow(username);
+        return user.getInterests(); 
+    }
+
+    public String getLevel(String username) {
+        UserModel user = userService.findOrThrow(username);
+        return user.getCefrLevel(); 
     }
 
     private Message generateResponseImpl(UserModel user) {
