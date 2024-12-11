@@ -17,7 +17,9 @@ public class ChatService {
     @Autowired private UserService userService;
     @Autowired private LlmService llmService;
     @Autowired private LanguageLevelService languageLevelService;
+    private LlmReminderService llmReminderService;
     private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Integer remainderFrequency = 25;
 
     public String chat(UserMessageDto userMessageDto) {
         UserModel user = userService.findOrThrow(userMessageDto.getUsername());
@@ -42,6 +44,9 @@ public class ChatService {
             logger.info(
                     "User {} is not evaluated. Delegating to LanguageLevelService", user.getName());
             return languageLevelService.evaluate(user);
+        }
+        if (user.getMessages().size() % remainderFrequency == 0) {
+            llmReminderService.sendSystemReminder(user);
         }
         return llmService.generateLlmResponse(user);
     }

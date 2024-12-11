@@ -23,7 +23,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: hsl(225, 100% 99%);
+    background-color: white;
     overflow: hidden;
 }
 
