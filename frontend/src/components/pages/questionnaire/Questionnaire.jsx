@@ -48,11 +48,13 @@ function Questionnaire() {
     }, [page, navigate]);
 
     return (
-        <div>
+        <div className="questionnaire-wrapper">
             <div className="questionnaire-progress-bar-container">
-                <button className="back-button" onClick={handleBackStep}>
-                    <i className="ri-arrow-left-line"></i>
-                </button>
+                {page !== "goals" && (
+                    <button className="back-button" onClick={handleBackStep}>
+                        <i className="ri-arrow-left-line"></i>
+                    </button>
+                )}
                 <ProgressBar progress={progress} />
             </div>
 
