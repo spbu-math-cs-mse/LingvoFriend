@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.List;
 
 @Service
 public class WordsReminderService {
@@ -52,34 +53,33 @@ public class WordsReminderService {
     public Word changeWordReminderStep(Word word) {
         int currentStep = word.getStep();
 
-        Duration[] period =
-                new Duration[] {
-                    Duration.ofDays(1),
-                    Duration.ofDays(2),
-                    Duration.ofDays(4),
-                    Duration.ofDays(8),
-                    Duration.ofDays(16),
-                    Duration.ofDays(32)
-                }; // 63 ~ 2 months
+        List<Duration> periodList =
+                List.of(
+                        Duration.ofDays(1),
+                        Duration.ofDays(2),
+                        Duration.ofDays(4),
+                        Duration.ofDays(8),
+                        Duration.ofDays(16),
+                        Duration.ofDays(32)); // 63 days ~ 2 months
 
         switch (currentStep) {
             case 1:
-                word.setTime(word.getTime().plus(period[0]));
+                word.setTime(word.getTime().plus(periodList.get(0)));
                 break;
             case 2:
-                word.setTime(word.getTime().plus(period[1]));
+                word.setTime(word.getTime().plus(periodList.get(1)));
                 break;
             case 3:
-                word.setTime(word.getTime().plus(period[2]));
+                word.setTime(word.getTime().plus(periodList.get(2)));
                 break;
             case 4:
-                word.setTime(word.getTime().plus(period[3]));
+                word.setTime(word.getTime().plus(periodList.get(3)));
                 break;
             case 5:
-                word.setTime(word.getTime().plus(period[4]));
+                word.setTime(word.getTime().plus(periodList.get(4)));
                 break;
             case 6:
-                word.setTime(word.getTime().plus(period[5]));
+                word.setTime(word.getTime().plus(periodList.get(5)));
                 break;
         }
 
