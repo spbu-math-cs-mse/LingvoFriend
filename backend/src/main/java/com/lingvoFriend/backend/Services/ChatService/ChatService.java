@@ -19,8 +19,7 @@ public class ChatService {
     @Autowired private LlmService llmService;
     @Autowired private LanguageLevelService languageLevelService;
     @Autowired private WordsReminderService wordsReminderService;
-    
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     private LlmReminderService llmReminderService;
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Integer remainderFrequency = 25;
@@ -43,7 +42,6 @@ public class ChatService {
                 .collect(Collectors.toList());
     }
 
-
     private Message generateResponseImpl(UserModel user) {
         if (!languageLevelService.isEvaluated(user)) {
             logger.info(
@@ -59,11 +57,9 @@ public class ChatService {
             userService.addMessageToUser(user, wordsReminderPrompt);
         }
 
-=======
         if (user.getMessages().size() % remainderFrequency == 0) {
             llmReminderService.sendSystemReminder(user);
         }
->>>>>>> main
         return llmService.generateLlmResponse(user);
     }
 }
