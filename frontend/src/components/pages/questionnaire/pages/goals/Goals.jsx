@@ -88,7 +88,6 @@ const Goals = ({ progress, onNextStep }) => {
             </div>
 
             <div className="questionnaire-next-button-container">
-                <div className="line-above-button"></div>
                 <button
                     className="questionnaire-next-button"
                     onClick={() => {

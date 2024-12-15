@@ -9,8 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.time.Instant;
 
 @Service
 public class ChatService {
@@ -18,7 +19,11 @@ public class ChatService {
     @Autowired private LlmService llmService;
     @Autowired private LanguageLevelService languageLevelService;
     @Autowired private WordsReminderService wordsReminderService;
+    
     private final Logger logger = LoggerFactory.getLogger(getClass());
+    private LlmReminderService llmReminderService;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Integer remainderFrequency = 25;
 
     public String chat(UserMessageDto userMessageDto) {
         UserModel user = userService.findOrThrow(userMessageDto.getUsername());
@@ -33,8 +38,11 @@ public class ChatService {
 
     public List<Message> getHistory(String username) {
         UserModel user = userService.findOrThrow(username);
-        return user.getMessages();
+        return user.getMessages().stream()
+                .filter(message -> !message.isSystem())
+                .collect(Collectors.toList());
     }
+
 
     private Message generateResponseImpl(UserModel user) {
         if (!languageLevelService.isEvaluated(user)) {
@@ -51,6 +59,11 @@ public class ChatService {
             userService.addMessageToUser(user, wordsReminderPrompt);
         }
 
+=======
+        if (user.getMessages().size() % remainderFrequency == 0) {
+            llmReminderService.sendSystemReminder(user);
+        }
+>>>>>>> main
         return llmService.generateLlmResponse(user);
     }
 }

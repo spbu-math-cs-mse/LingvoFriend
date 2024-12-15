@@ -6,14 +6,76 @@ import BottomBar from "../../bottomBar/BottomBar";
 import ReactTooltip from "react-tooltip";
 import "./chat.css";
 
+const DialogWord = ({segment, index}) => {
+    const [translation, setTranslation] = useState(null)
+    const [isLoadingWord, setIsLoadingWord] = useState(null)
+    const tooltipId = `tooltip-${index}-${segment}`;
+    const [open, setOpen] = React.useState(false);
+
+    if (segment.trim() === "" || /[.,!?;:()]/.test(segment)) {
+        return segment;
+    }
+
+    const handleWordClick = async (word) => {
+        if (translation)
+            return;
+        setIsLoadingWord(true);
+        try {
+            const response = await axios.post("https://api-free.deepl.com/v2/translate", null, {
+                params: {
+                    auth_key: "805412aa-0cfc-4096-b255-74aaf6f8fbae:fx",
+                    text: word,
+                    target_lang: "RU",
+                    source_lang: "EN"
+                },
+            });
+            const translatedText = response.data.translations[0].text;
+            setTranslation(translatedText)
+        } catch (error) {
+            console.error("Translation error:", error);
+            setTranslation("Translation unavailable")
+        } finally {
+            setIsLoadingWord(false)
+        }
+    }
+    return (
+        <span
+            key={index}
+            className="clickable-word"
+            onMouseOver={() => handleWordClick(segment)}
+            data-tip
+            data-for={tooltipId}
+            data-event="click"
+            onMouseEnter={() => !open && setOpen(true)}
+        >
+            {segment}
+            {
+                open && (
+                    <ReactTooltip
+                        id={tooltipId}
+                        place="top"
+                        effect="solid"
+                        className="tooltip-translation"
+                        open={open}
+                    >
+                        {isLoadingWord
+                            ? "Loading..."
+                            : translation
+                                ? translation
+                                : "error"}
+                    </ReactTooltip>
+                )
+            }
+        </span>
+    );
+}
+
 const Chat = () => {
     const [messages, setMessages] = useState([]);
     const [username, setUsername] = useState(null);
     const [input, setInput] = useState("");
     const chatEndRef = useRef(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [translations, setTranslations] = useState({});
-    const [loadingWords, setLoadingWords] = useState({});
 
     const serverUrl = process.env.REACT_APP_SERVER_URL || "";
 
@@ -200,22 +262,12 @@ const Chat = () => {
 
     useEffect(() => {
         ReactTooltip.rebuild();
-    }, [messages, translations, loadingWords]);
+    }, [messages]);
 
     const renderMessage = (text) => {
         const messageText = extractText(text) || "";
-
         const wordsAndPunctuations = messageText.split(/(\s+|[.,!?;:()])/);
-
         return wordsAndPunctuations.map((segment, index) => {
-            if (segment.trim() === "" || /[.,!?;:()]/.test(segment)) {
-                return segment;
-            }
-
-            const translation = translations[segment];
-            const isLoadingWord = loadingWords[segment];
-            const tooltipId = `tooltip-${index}-${segment}`;
-
             return (
                 <span
                     key={index}
@@ -239,6 +291,8 @@ const Chat = () => {
                     </ReactTooltip>
                 </span>
             );
+                <DialogWord segment={segment} index={index} />
+            )
         });
     };
 

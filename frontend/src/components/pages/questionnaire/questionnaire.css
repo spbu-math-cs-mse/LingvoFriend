@@ -13,8 +13,7 @@
     width: auto;
     height: auto;
     padding: 0;
-    margin: 0;
-    margin-right: 10px;
+    margin: 0 10px 0 0;
     background: transparent;
     border: none;
     color: #333;
@@ -41,7 +40,7 @@
     font-size: 1.8rem;
     color: #333;
     text-align: center;
-    margin-bottom: 70px;
+    margin: 35px 0;
     width: 100%;
 }
 
@@ -105,13 +104,7 @@
     height: 15%;
     width: 100%;
     background-color: white;
-}
-
-.line-above-button {
-    height: 1px;
-    background-color: #ccc;
-    width: 100%;
-    margin-bottom: 30px;
+    border-top: 1px solid #ccc;
 }
 
 .questionnaire-next-button {
@@ -140,4 +133,78 @@
 .questionnaire-next-button:active {
     transform: translateY(0);
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.15);
+}
+
+@media screen and (max-width: 768px) {
+    .questionnaire-progress-bar-container {
+        width: 90%;
+        top: 10px;
+    }
+
+    .questionnaire-container {
+        max-height: calc(100vh - 242px);
+    }
+
+    .questionnaire-question {
+        font-size: 1.4rem;
+        margin: 15px 0;
+    }
+
+    .questionnaire-buttons-container {
+        max-width: 800px;
+        justify-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 0;
+        padding-bottom: 15px;
+        overflow-y: scroll;
+        width: 100%;
+        column-gap: 10px;
+        row-gap: 10px;
+    }
+
+    .questionnaire-button {
+        width: 90%;
+        height: 60px;
+        font-size: 1rem;
+        gap: 10px;
+        padding: 10px 15px;
+    }
+
+    .questionnaire-next-button {
+        width: 50%;
+        height: 50px;
+        font-size: 1rem;
+        margin: 0 auto;
+        position: static;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .questionnaire-next-button-container {
+        height: auto;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: white;
+        padding: 20px 0;
+    }
+
+    .icone {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .questionnaire-question {
+        font-size: 1.2rem;
+    }
+
+    .questionnaire-button {
+        font-size: 0.9rem;
+    }
 }
