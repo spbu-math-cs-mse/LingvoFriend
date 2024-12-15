@@ -38,9 +38,9 @@ const Profile = () => {
     
             try {
                 const [goalsResponse, interestsResponse, levelResponse] = await Promise.all([
-                    axios.get(`${serverUrl}/api/goals/${username}`, { withCredentials: true }),
-                    axios.get(`${serverUrl}/api/interests/${username}`, { withCredentials: true }),
-                    axios.get(`${serverUrl}/api/level/${username}`, { withCredentials: true }),
+                    axios.get(`${serverUrl}/api/profile/goals/${username}`, { withCredentials: true }),
+                    axios.get(`${serverUrl}/api/profile/interests/${username}`, { withCredentials: true }),
+                    axios.get(`${serverUrl}/api/profile/level/${username}`, { withCredentials: true }),
                 ]);
     
                 setGoals(goalsResponse.data);

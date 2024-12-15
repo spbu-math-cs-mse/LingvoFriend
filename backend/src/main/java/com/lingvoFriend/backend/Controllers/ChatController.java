@@ -49,49 +49,6 @@ class ChatController {
         }
     }
 
-    @GetMapping("/goals/{username}")
-    public ResponseEntity<List<String>> getGoalsInfo(
-        HttpServletRequest request, @PathVariable String username) {
-        try {
-            List<String> goals = chatService.getGoals(username);
-            return ResponseEntity.ok(goals);
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
-
-    @GetMapping("/interests/{username}")
-    public ResponseEntity<List<String>> getInterestsInfo(
-        HttpServletRequest request, @PathVariable String username) {
-        try {
-            List<String> interests = chatService.getInterests(username);
-            return ResponseEntity.ok(interests);
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
-
-    @GetMapping("/level/{username}")
-    public ResponseEntity<String> getLevelInfo(
-        HttpServletRequest request, @PathVariable String username) {
-        try {
-            String level = chatService.getLevel(username);
-            if (level == null || level.isEmpty()) {
-                return ResponseEntity.ok("unknown"); 
-            }
-            return ResponseEntity.ok(level);
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
-
-
     private ResponseEntity<String> processRequest(UserMessageDto userMessageDto) {
         try {
             String responseText = chatService.chat(userMessageDto);

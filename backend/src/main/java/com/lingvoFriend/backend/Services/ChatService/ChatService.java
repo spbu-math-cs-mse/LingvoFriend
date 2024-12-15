@@ -39,20 +39,6 @@ public class ChatService {
                 .collect(Collectors.toList());
     }
 
-    public List<String> getGoals(String username) {
-        UserModel user = userService.findOrThrow(username);
-        return user.getGoals(); 
-    }
-
-    public List<String> getInterests(String username) {
-        UserModel user = userService.findOrThrow(username);
-        return user.getInterests(); 
-    }
-
-    public String getLevel(String username) {
-        UserModel user = userService.findOrThrow(username);
-        return user.getCefrLevel(); 
-    }
 
     private Message generateResponseImpl(UserModel user) {
         if (!languageLevelService.isEvaluated(user)) {
