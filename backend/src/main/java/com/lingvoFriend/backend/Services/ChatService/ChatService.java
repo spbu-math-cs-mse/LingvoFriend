@@ -1,22 +1,25 @@
 package com.lingvoFriend.backend.Services.ChatService;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
+import com.lingvoFriend.backend.Services.ChatService.dto.UserMessageDto;
+import com.lingvoFriend.backend.Services.ChatService.models.Message;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
-import com.lingvoFriend.backend.Services.ChatService.dto.UserMessageDto;
-import com.lingvoFriend.backend.Services.ChatService.models.Message;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.time.Instant;
 
 @Service
 public class ChatService {
     @Autowired private UserService userService;
     @Autowired private LlmService llmService;
     @Autowired private LanguageLevelService languageLevelService;
+    @Autowired private WordsReminderService wordsReminderService;
+
     private LlmReminderService llmReminderService;
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Integer remainderFrequency = 25;
@@ -39,13 +42,21 @@ public class ChatService {
                 .collect(Collectors.toList());
     }
 
-
     private Message generateResponseImpl(UserModel user) {
         if (!languageLevelService.isEvaluated(user)) {
             logger.info(
                     "User {} is not evaluated. Delegating to LanguageLevelService", user.getName());
             return languageLevelService.evaluate(user);
         }
+
+        // if there is word, and it's time to show it (word's time is before now)
+        // then we add the prompt for llm to use it
+        if (!user.getUnknownWords().isEmpty()
+                && user.getUnknownWords().first().getTime().isBefore(Instant.now())) {
+            Message wordsReminderPrompt = wordsReminderService.addWordsReminderPrompt(user);
+            userService.addMessageToUser(user, wordsReminderPrompt);
+        }
+
         if (user.getMessages().size() % remainderFrequency == 0) {
             llmReminderService.sendSystemReminder(user);
         }
