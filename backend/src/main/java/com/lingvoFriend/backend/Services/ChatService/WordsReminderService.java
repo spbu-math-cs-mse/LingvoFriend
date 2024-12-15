@@ -14,7 +14,7 @@ import java.time.Duration;
 public class WordsReminderService {
     @Autowired private UserService userService;
     public static final int storageCapacity = 100;
-    public static final int reminderSteps = 5;
+    public static final int reminderSteps = 7;
 
     public void saveUnknownWord(WordsReminderDto wordsReminderDto) {
         UserModel user = userService.findOrThrow(wordsReminderDto.getUsername());
@@ -52,18 +52,34 @@ public class WordsReminderService {
     public Word changeWordReminderStep(Word word) {
         int currentStep = word.getStep();
 
+        Duration[] period =
+                new Duration[] {
+                    Duration.ofDays(1),
+                    Duration.ofDays(2),
+                    Duration.ofDays(4),
+                    Duration.ofDays(8),
+                    Duration.ofDays(16),
+                    Duration.ofDays(32)
+                }; // 63 ~ 2 months
+
         switch (currentStep) {
             case 1:
-                word.setTime(word.getTime().plus(Duration.ofDays(1)));
+                word.setTime(word.getTime().plus(period[0]));
                 break;
             case 2:
-                word.setTime(word.getTime().plus(Duration.ofDays(3)));
+                word.setTime(word.getTime().plus(period[1]));
                 break;
             case 3:
-                word.setTime(word.getTime().plus(Duration.ofDays(5)));
+                word.setTime(word.getTime().plus(period[2]));
                 break;
             case 4:
-                word.setTime(word.getTime().plus(Duration.ofDays(7)));
+                word.setTime(word.getTime().plus(period[3]));
+                break;
+            case 5:
+                word.setTime(word.getTime().plus(period[4]));
+                break;
+            case 6:
+                word.setTime(word.getTime().plus(period[5]));
                 break;
         }
 

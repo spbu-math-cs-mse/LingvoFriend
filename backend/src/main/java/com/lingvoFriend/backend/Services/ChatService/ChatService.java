@@ -26,14 +26,6 @@ public class ChatService {
 
         if (userMessageDto.getMessage().isSystem()) return "successfully added system message";
 
-        // if there is word, and it's time to show it (word's time is before now)
-        // then we add the prompt for llm to use it
-        if (!user.getUnknownWords().isEmpty()
-                && user.getUnknownWords().first().getTime().isBefore(Instant.now())) {
-            Message wordsReminderPrompt = wordsReminderService.addWordsReminderPrompt(user);
-            userService.addMessageToUser(user, wordsReminderPrompt);
-        }
-
         Message llmMessage = generateResponseImpl(user);
         userService.addMessageToUser(user, llmMessage);
         return llmMessage.getText();
@@ -50,6 +42,15 @@ public class ChatService {
                     "User {} is not evaluated. Delegating to LanguageLevelService", user.getName());
             return languageLevelService.evaluate(user);
         }
+
+        // if there is word, and it's time to show it (word's time is before now)
+        // then we add the prompt for llm to use it
+        if (!user.getUnknownWords().isEmpty()
+                && user.getUnknownWords().first().getTime().isBefore(Instant.now())) {
+            Message wordsReminderPrompt = wordsReminderService.addWordsReminderPrompt(user);
+            userService.addMessageToUser(user, wordsReminderPrompt);
+        }
+
         return llmService.generateLlmResponse(user);
     }
 }
