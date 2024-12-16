@@ -8,6 +8,10 @@ import com.lingvoFriend.backend.Services.ChatService.models.Word;
 import lombok.Getter;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +23,7 @@ import java.util.StringJoiner;
 public class UserService {
 
     @Getter @Autowired private UserRepository userRepository;
+    @Autowired private MongoTemplate mongoTemplate;
 
     public UserModel findOrThrow(String username) {
         return userRepository
@@ -34,7 +39,10 @@ public class UserService {
     public void addMessageToUser(UserModel user, Message message) {
         if (message != null) {
             user.getMessages().add(message);
-            userRepository.save(user);
+
+            Query query = new Query(Criteria.where("_id").is(user.getId()));
+            Update update = new Update().set("messages", user.getMessages());
+            mongoTemplate.updateFirst(query, update, UserModel.class);
         }
     }
 
@@ -47,7 +55,9 @@ public class UserService {
             user.getUnknownWords().remove(user.getUnknownWords().last());
         }
 
-        userRepository.save(user);
+        Query query = new Query(Criteria.where("_id").is(user.getId()));
+        Update update = new Update().set("unknownWords", user.getUnknownWords());
+        mongoTemplate.updateFirst(query, update, UserModel.class);
     }
 
     public String constructUserGoalsString(UserModel user) {
