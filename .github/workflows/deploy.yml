@@ -19,7 +19,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.YANDEX_CLOUD_SSH_HOST }}
           REMOTE_USER: github-ci
           TARGET: /home/github-ci/LingvoFriend
-          EXCLUDE: /.git, /**/.env
+          EXCLUDE: /.git, /**/.env, /node_modules
           SCRIPT_BEFORE_REQUIRED: true
           SCRIPT_BEFORE: |
             cd /home/github-ci/LingvoFriend
