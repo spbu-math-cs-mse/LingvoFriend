@@ -70,10 +70,10 @@ const Profile = () => {
         <div>
             <div className="profile-container">
                 <div className="profile-header">Мой профиль</div>
-                <div>
+                <div className="profile-row">
                     Имя: {username}
                 </div>
-                <div>
+                <div className="profile-border">
                     Уровень владения языком: {level}
                 </div>        
                 <div>Цели изучения языка</div>

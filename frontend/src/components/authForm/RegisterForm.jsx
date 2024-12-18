@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { FaLock, FaUser } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
 import "./authForm.css";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const RegisterForm = () => {
     const [username, setUsername] = useState("");
@@ -26,12 +28,15 @@ const RegisterForm = () => {
             if (response.ok) {
                 navigate("/questionnaire");
             } else {
-                const errorMessage = await response.text();
-                alert(errorMessage);
+                const errorMessage = await response.text(); 
+                if (response.status === 400 && errorMessage === "USERNAME_TAKEN") {
+                    toast.error("Это имя уже занято");
+                } else {
+                    toast.error("Произошла ошибка. Пожалуйста, попробуйте снова.");
+                }
             }
         } catch (error) {
-            console.error("Error during login:", error);
-            alert("An error occurred. Please try again.");
+            toast.error("Что-то пошло не так. Проверьте соединение с интернетом.");
         }
     };
 
