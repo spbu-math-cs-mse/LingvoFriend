@@ -21,12 +21,18 @@ class UserController {
     @GetMapping("/getProfileData")
     public ResponseEntity<UserProfileDto> getUserData(
             @CookieValue("__Host-auth-token") String token) {
-        String username = jwtGenerator.getUsernameFromToken(token);
-        List<String> goals = userService.getGoals(username);
-        List<String> interests = userService.getInterests(username);
-        String cefrLevel = userService.getCefrLevel(username);
+        try {
+            String username = jwtGenerator.getUsernameFromToken(token);
+            List<String> goals = userService.getGoals(username);
+            List<String> interests = userService.getInterests(username);
+            String cefrLevel = userService.getCefrLevel(username);
 
-        return ResponseEntity.ok(new UserProfileDto(username, goals, interests, cefrLevel));
+            return ResponseEntity.ok(new UserProfileDto(username, goals, interests, cefrLevel));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @GetMapping("/username")
