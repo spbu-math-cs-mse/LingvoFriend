@@ -1,7 +1,8 @@
-package com.lingvoFriend.backend.Services.ChatService;
+package com.lingvoFriend.backend.Services.UserService;
 
 import com.lingvoFriend.backend.Repositories.UserRepository;
 import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
+import com.lingvoFriend.backend.Services.ChatService.WordsReminderService;
 import com.lingvoFriend.backend.Services.ChatService.models.Message;
 import com.lingvoFriend.backend.Services.ChatService.models.Word;
 
@@ -88,7 +89,7 @@ public class UserService {
         return user.getInterests();
     }
 
-    public String getLevel(String username) {
+    public String getCefrLevel(String username) {
         UserModel user = findOrThrow(username);
         return user.getCefrLevel();
     }

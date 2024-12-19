@@ -16,32 +16,31 @@ const Profile = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [
-                    usernameResponse,
-                    goalsResponse,
-                    interestsResponse,
-                    levelResponse,
-                ] = await Promise.all([
-                    axios.get(`${serverUrl}/api/profile/username`, {
+                const response = await axios.get(
+                    `${serverUrl}/api/user/getProfileData`,
+                    {
                         withCredentials: true,
-                    }),
-                    axios.get(`${serverUrl}/api/profile/goals`, {
-                        withCredentials: true,
-                    }),
-                    axios.get(`${serverUrl}/api/profile/interests`, {
-                        withCredentials: true,
-                    }),
-                    axios.get(`${serverUrl}/api/profile/level`, {
-                        withCredentials: true,
-                    }),
-                ]);
+                    }
+                );
 
-                setUsername(usernameResponse.data);
-                setGoals(goalsResponse.data);
-                setInterests(interestsResponse.data);
-
-                const level = levelResponse.data;
-                setLevel(level === "unknown" ? "Неизвестен" : level);
+                setUsername(
+                    response.data.username === null
+                        ? "Неизвестен"
+                        : response.data.username
+                );
+                setGoals(
+                    response.data.goals === null ? [] : response.data.goals
+                );
+                setInterests(
+                    response.data.interests === null
+                        ? []
+                        : response.data.interests
+                );
+                setLevel(
+                    response.data.cefrLevel === null
+                        ? "Неизвестен"
+                        : response.data.cefrLevel
+                );
             } catch (err) {
                 console.error("Error fetching data:", err);
                 setError("Failed to load data. Please try again later.");
