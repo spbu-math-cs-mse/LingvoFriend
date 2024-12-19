@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { FaLock, FaUser } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
 import "./authForm.css";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const LoginForm = ({ setUsername }) => {
+const LoginForm = () => {
     const [username, setInputUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
@@ -29,17 +29,26 @@ const LoginForm = ({ setUsername }) => {
                 navigate("/home");
             } else {
                 const errorData = await response.json();
-                if (response.status === 400 && errorData.errorMessage === "WRONG_USERNAME") {
-                    toast.error("Неправильное имя пользователя")
-                } 
-                else if (response.status === 401 && errorData.errorMessage === "WRONG_PASSWORD") {
-                    toast.error("Неправильный пароль")
+                if (
+                    response.status === 400 &&
+                    errorData.errorMessage === "WRONG_USERNAME"
+                ) {
+                    toast.error("Неправильное имя пользователя");
+                } else if (
+                    response.status === 401 &&
+                    errorData.errorMessage === "WRONG_PASSWORD"
+                ) {
+                    toast.error("Неправильный пароль");
                 } else {
-                    toast.error("Произошла ошибка. Пожалуйста, попробуйте снова.");
+                    toast.error(
+                        "Произошла ошибка. Пожалуйста, попробуйте снова."
+                    );
                 }
             }
         } catch (error) {
-            toast.error("Что-то пошло не так. Проверьте соединение с интернетом.");
+            toast.error(
+                "Что-то пошло не так. Проверьте соединение с интернетом."
+            );
         }
     };
 

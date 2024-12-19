@@ -15,10 +15,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.StringJoiner;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -58,20 +55,14 @@ public class UserService {
 
     public String constructUserGoalsString(UserModel user) {
         List<String> goals = user.getGoals();
-        StringJoiner joiner = new StringJoiner(", ");
-        for (String goal : goals) {
-            joiner.add(goal);
-        }
-        return joiner.toString();
+        return (goals == null || goals.isEmpty()) ? "no goals specified" : String.join(", ", goals);
     }
 
     public String constructUserPreferencesString(UserModel user) {
         List<String> interests = user.getInterests();
-        StringJoiner joiner = new StringJoiner(", ");
-        for (String interest : interests) {
-            joiner.add(interest);
-        }
-        return joiner.toString();
+        return (interests == null || interests.isEmpty())
+                ? "no interests specified"
+                : String.join(", ", interests);
     }
 
     public List<String> getGoals(String username) {
@@ -90,8 +81,21 @@ public class UserService {
     }
 
     public void clearMessages(UserModel user) {
+        int lastMessagesSize = 30;
+        List<Message> lastMessages =
+                user.getMessages()
+                        .subList(
+                                Math.max(user.getMessages().size() - lastMessagesSize, 0),
+                                user.getMessages().size());
+
+        user.setMessages(lastMessages);
+
         Query query = new Query(Criteria.where("_id").is(user.getId()));
-        Update update = new Update().set("messages", new ArrayList<>());
+        Update update = new Update().set("messages", lastMessages);
         mongoTemplate.updateFirst(query, update, UserModel.class);
+    }
+
+    public long countMeaningfulMessages(UserModel user) {
+        return user.getMessages().stream().filter(message -> !message.isSystem()).count();
     }
 }

@@ -19,10 +19,10 @@ public class ChatService {
     @Autowired private LlmService llmService;
     @Autowired private LanguageLevelService languageLevelService;
     @Autowired private WordsReminderService wordsReminderService;
+    @Autowired private LlmReminderService llmReminderService;
 
-    private LlmReminderService llmReminderService;
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final Integer remainderFrequency = 50;
+    private final Integer messageRetentionLimit = 70;
 
     public String chat(UserMessageDto userMessageDto) {
         UserModel user = userService.findOrThrow(userMessageDto.getUsername());
@@ -49,7 +49,9 @@ public class ChatService {
             return languageLevelService.evaluate(user);
         }
 
-        if (user.getMessages().size() > remainderFrequency) {
+        // every 70 user's or assistant's messages we'll cut List<Messages> to 30 last
+        // and send reminder prompt
+        if (userService.countMeaningfulMessages(user) > messageRetentionLimit) {
             userService.clearMessages(user);
             llmReminderService.sendSystemReminder(user);
         }
