@@ -9,6 +9,8 @@ public class Message {
     private String role;
     private String text;
 
+    public Message() {}
+
     public boolean isSystem() {
         return role.equals("system");
     }
