@@ -3,7 +3,7 @@ import { FaLock, FaUser } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
 import "./authForm.css";
 
-const LoginForm = ({ setUsername }) => {
+const LoginForm = () => {
     const [username, setInputUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();

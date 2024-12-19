@@ -1,5 +1,6 @@
 package com.lingvoFriend.backend.Services.ChatService;
 
+import com.lingvoFriend.backend.Security.JwtGenerator;
 import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
 import com.lingvoFriend.backend.Services.ChatService.dto.WordsReminderDto;
 import com.lingvoFriend.backend.Services.ChatService.models.Message;
@@ -15,11 +16,14 @@ import java.util.List;
 @Service
 public class WordsReminderService {
     @Autowired private UserService userService;
+    @Autowired private JwtGenerator jwtGenerator;
+
     public static final int storageCapacity = 100;
     public static final int reminderSteps = 7;
 
-    public void saveUnknownWord(WordsReminderDto wordsReminderDto) {
-        UserModel user = userService.findOrThrow(wordsReminderDto.getUsername());
+    public void saveUnknownWord(String token, WordsReminderDto wordsReminderDto) {
+        String username = jwtGenerator.getUsernameFromToken(token);
+        UserModel user = userService.findOrThrow(username);
         Word unknownWord = new Word(wordsReminderDto.getWord());
 
         // when user clicks on unknownWord for the first time

@@ -1,5 +1,6 @@
 package com.lingvoFriend.backend.Services.ChatService;
 
+import com.lingvoFriend.backend.Security.JwtGenerator;
 import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
 import com.lingvoFriend.backend.Services.ChatService.dto.UserMessageDto;
 import com.lingvoFriend.backend.Services.ChatService.models.Message;
@@ -9,9 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.time.Instant;
 
 @Service
 public class ChatService {
@@ -19,13 +20,15 @@ public class ChatService {
     @Autowired private LlmService llmService;
     @Autowired private LanguageLevelService languageLevelService;
     @Autowired private WordsReminderService wordsReminderService;
+    @Autowired private JwtGenerator jwtGenerator;
 
     private LlmReminderService llmReminderService;
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Integer remainderFrequency = 25;
 
-    public String chat(UserMessageDto userMessageDto) {
-        UserModel user = userService.findOrThrow(userMessageDto.getUsername());
+    public String chat(String token, UserMessageDto userMessageDto) {
+        String username = jwtGenerator.getUsernameFromToken(token);
+        UserModel user = userService.findOrThrow(username);
         userService.addMessageToUser(user, userMessageDto.getMessage());
 
         if (userMessageDto.getMessage().isSystem()) return "successfully added system message";

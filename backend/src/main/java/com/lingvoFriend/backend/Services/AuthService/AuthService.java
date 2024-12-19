@@ -83,8 +83,7 @@ public class AuthService {
         }
     }
 
-    public ResponseEntity<String> getUsernameFromToken(String token) {
-        String username = jwtGenerator.getUsernameFromToken(token);
-        return ResponseEntity.ok().body(username);
+    public String getUsernameFromToken(String token) {
+        return jwtGenerator.getUsernameFromToken(token);
     }
 }

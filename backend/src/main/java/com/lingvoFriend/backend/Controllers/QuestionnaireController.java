@@ -1,12 +1,13 @@
 package com.lingvoFriend.backend.Controllers;
 
 import com.lingvoFriend.backend.Repositories.UserRepository;
+import com.lingvoFriend.backend.Security.JwtGenerator;
 import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
 import com.lingvoFriend.backend.Services.QuestionnaireService.QuestionnaireQuestion;
 import com.lingvoFriend.backend.Services.QuestionnaireService.QuestionnaireService;
 import com.lingvoFriend.backend.Services.QuestionnaireService.dto.QuestionnaireGoalsDto;
-
 import com.lingvoFriend.backend.Services.QuestionnaireService.dto.QuestionnaireInterestsDto;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -24,6 +25,7 @@ public class QuestionnaireController {
     @Autowired private QuestionnaireService questionnaireService;
     @Autowired private UserRepository userRepository;
     @Autowired private MongoTemplate mongoTemplate;
+    @Autowired private JwtGenerator jwtGenerator;
 
     @PostMapping("/start")
     public ResponseEntity<QuestionnaireQuestion> startQuestionnaire(@RequestParam String userId) {
@@ -46,8 +48,9 @@ public class QuestionnaireController {
 
     @PostMapping("/saveGoals")
     public ResponseEntity<String> saveGoals(
+            @CookieValue("__Host-auth-token") String token,
             @RequestBody QuestionnaireGoalsDto questionnaireGoalsDto) {
-        String username = questionnaireGoalsDto.getUsername();
+        String username = jwtGenerator.getUsernameFromToken(token);
         List<String> goals = questionnaireGoalsDto.getGoals();
 
         UserModel user =
@@ -66,8 +69,9 @@ public class QuestionnaireController {
 
     @PostMapping("/saveInterests")
     public ResponseEntity<String> saveInterests(
+            @CookieValue("__Host-auth-token") String token,
             @RequestBody QuestionnaireInterestsDto questionnaireInterestsDto) {
-        String username = questionnaireInterestsDto.getUsername();
+        String username = jwtGenerator.getUsernameFromToken(token);
         List<String> interests = questionnaireInterestsDto.getInterests();
 
         UserModel user =
