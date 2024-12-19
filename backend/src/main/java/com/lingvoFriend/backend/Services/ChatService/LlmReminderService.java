@@ -2,6 +2,8 @@ package com.lingvoFriend.backend.Services.ChatService;
 
 import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
 import com.lingvoFriend.backend.Services.ChatService.models.Message;
+import com.lingvoFriend.backend.Services.UserService.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -11,15 +11,12 @@ import Welcome from "./components/pages/welcome/Welcome";
 import RegisterForm from "./components/authForm/RegisterForm";
 import Chat from "./components/pages/chat/Chat";
 import Store from "./components/pages/store/Store";
-import { useState } from "react";
 import Questionnaire from "./components/pages/questionnaire/Questionnaire";
 import useAuth from "./components/authForm/useAuth";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 
 function App() {
-    const [username, setUsername] = useState(null);
-
     const PrivateRoute = ({ children }) => {
         const isAuthenticated = useAuth();
 
@@ -51,10 +48,7 @@ function App() {
                         </PublicRoute>
                     }
                 />
-                <Route
-                    path="/login"
-                    element={<LoginForm setUsername={setUsername} />}
-                />
+                <Route path="/login" element={<LoginForm />} />
                 <Route path="/register" element={<RegisterForm />} />
 
                 <Route
@@ -85,7 +79,7 @@ function App() {
                     path="/chat"
                     element={
                         <PrivateRoute>
-                            <Chat username={username} />
+                            <Chat />
                         </PrivateRoute>
                     }
                 />

@@ -6,7 +6,7 @@ import BottomBar from "../../bottomBar/BottomBar";
 import ReactTooltip from "react-tooltip";
 import "./chat.css";
 
-const DialogWord = ({ segment, index, username }) => {
+const DialogWord = ({ segment, index }) => {
     const [translation, setTranslation] = useState(null);
     const [isLoadingWord, setIsLoadingWord] = useState(null);
     const tooltipId = `tooltip-${index}-${segment}`;
@@ -36,7 +36,6 @@ const DialogWord = ({ segment, index, username }) => {
             );
 
             const requestBody = {
-                username: username,
                 word: word,
             };
 
@@ -88,7 +87,6 @@ const DialogWord = ({ segment, index, username }) => {
 
 const Chat = () => {
     const [messages, setMessages] = useState([]);
-    const [username, setUsername] = useState(null);
     const [input, setInput] = useState("");
     const chatEndRef = useRef(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -96,37 +94,11 @@ const Chat = () => {
     const serverUrl = process.env.REACT_APP_SERVER_URL || "";
 
     useEffect(() => {
-        const fetchUsername = async () => {
-            try {
-                const response = await axios.get(
-                    `${serverUrl}/api/jwt/username`,
-                    {
-                        withCredentials: true,
-                    }
-                );
-
-                setUsername(response.data);
-            } catch (error) {
-                console.error("Ошибка при получении username:", error);
-            }
-        };
-
-        fetchUsername();
-    }, [serverUrl]);
-
-    useEffect(() => {
         const fetchChatHistory = async () => {
-            if (!username) {
-                return;
-            }
-
             try {
-                const response = await axios.get(
-                    `${serverUrl}/api/history/${username}`,
-                    {
-                        withCredentials: true,
-                    }
-                );
+                const response = await axios.get(`${serverUrl}/api/history`, {
+                    withCredentials: true,
+                });
                 const chatHistory = response.data;
                 if (chatHistory.length === 0) {
                     const welcomeMessage = {
@@ -142,10 +114,8 @@ const Chat = () => {
             }
         };
 
-        if (username) {
-            fetchChatHistory();
-        }
-    }, [username, serverUrl]);
+        fetchChatHistory();
+    }, [serverUrl]);
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -163,7 +133,6 @@ const Chat = () => {
 
         try {
             const requestBody = {
-                username: username,
                 message: {
                     role: "user",
                     text: input,
@@ -238,13 +207,7 @@ const Chat = () => {
         const messageText = extractText(text) || "";
         const wordsAndPunctuations = messageText.split(/(\s+|[.,!?;:()])/);
         return wordsAndPunctuations.map((segment, index) => {
-            return (
-                <DialogWord
-                    segment={segment}
-                    index={index}
-                    username={username}
-                />
-            );
+            return <DialogWord segment={segment} index={index} />;
         });
     };
 

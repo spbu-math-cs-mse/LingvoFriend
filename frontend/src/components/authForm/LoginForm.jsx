@@ -5,7 +5,7 @@ import "./authForm.css";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const LoginForm = ({ setUsername }) => {
+const LoginForm = () => {
     const [username, setInputUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();

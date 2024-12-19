@@ -1,30 +1,37 @@
 package com.lingvoFriend.backend.Services.ChatService;
 
+import com.lingvoFriend.backend.Security.JwtGenerator;
 import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
 import com.lingvoFriend.backend.Services.ChatService.dto.WordsReminderDto;
 import com.lingvoFriend.backend.Services.ChatService.models.Message;
 import com.lingvoFriend.backend.Services.ChatService.models.Word;
+import com.lingvoFriend.backend.Services.UserService.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 
 @Service
 public class WordsReminderService {
     @Autowired private UserService userService;
+    @Autowired private JwtGenerator jwtGenerator;
+
     public static final int storageCapacity = 100;
     public static final int reminderSteps = 7;
 
-    public void saveUnknownWord(WordsReminderDto wordsReminderDto) {
-        UserModel user = userService.findOrThrow(wordsReminderDto.getUsername());
+    public void saveUnknownWord(String token, WordsReminderDto wordsReminderDto) {
+        String username = jwtGenerator.getUsernameFromToken(token);
+        UserModel user = userService.findOrThrow(username);
         Word unknownWord = new Word(wordsReminderDto.getWord());
 
         // when user clicks on unknownWord for the first time
         // it'll be shown not earlier than 30 minutes from now as the first reminderStep
         unknownWord.setTime(unknownWord.getTime().plus(Duration.ofMinutes(30)));
         unknownWord.setStep(1);
+
         userService.addUnknownWordToUser(user, unknownWord);
     }
 
@@ -64,22 +71,22 @@ public class WordsReminderService {
 
         switch (currentStep) {
             case 1:
-                word.setTime(word.getTime().plus(periodList.get(0)));
+                word.setTime(Instant.now().plus(periodList.get(0)));
                 break;
             case 2:
-                word.setTime(word.getTime().plus(periodList.get(1)));
+                word.setTime(Instant.now().plus(periodList.get(1)));
                 break;
             case 3:
-                word.setTime(word.getTime().plus(periodList.get(2)));
+                word.setTime(Instant.now().plus(periodList.get(2)));
                 break;
             case 4:
-                word.setTime(word.getTime().plus(periodList.get(3)));
+                word.setTime(Instant.now().plus(periodList.get(3)));
                 break;
             case 5:
-                word.setTime(word.getTime().plus(periodList.get(4)));
+                word.setTime(Instant.now().plus(periodList.get(4)));
                 break;
             case 6:
-                word.setTime(word.getTime().plus(periodList.get(5)));
+                word.setTime(Instant.now().plus(periodList.get(5)));
                 break;
         }
 
