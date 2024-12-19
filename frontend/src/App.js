@@ -13,6 +13,8 @@ import Chat from "./components/pages/chat/Chat";
 import Store from "./components/pages/store/Store";
 import Questionnaire from "./components/pages/questionnaire/Questionnaire";
 import useAuth from "./components/authForm/useAuth";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
     const PrivateRoute = ({ children }) => {
@@ -90,6 +92,12 @@ function App() {
                     }
                 />
             </Routes>
+            <ToastContainer 
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={true}
+                closeOnClick={true} 
+            />
         </Router>
     );
 }

@@ -1,5 +1,20 @@
 package com.lingvoFriend.backend.Services.AuthService;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
+
 import com.lingvoFriend.backend.Repositories.RoleRepository;
 import com.lingvoFriend.backend.Repositories.UserRepository;
 import com.lingvoFriend.backend.Security.JwtGenerator;
@@ -9,22 +24,7 @@ import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-
 import lombok.AllArgsConstructor;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -38,7 +38,7 @@ public class AuthService {
 
     public ResponseEntity<?> register(AuthUserDto authUserDto, HttpServletResponse response) {
         if (userRepository.existsByUsername(authUserDto.getUsername())) {
-            return new ResponseEntity<>("Username is taken", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("USERNAME_TAKEN", HttpStatus.BAD_REQUEST);
         }
 
         UserModel userModel =
@@ -55,24 +55,35 @@ public class AuthService {
 
     public ResponseEntity<AuthResponseDto> login(
             @RequestBody AuthUserDto authUserDto, HttpServletResponse response) {
-        Authentication authentication =
-                authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(
-                                authUserDto.getUsername(), authUserDto.getPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (!userRepository.existsByUsername(authUserDto.getUsername())) {
+            return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new AuthResponseDto(null, "WRONG_USERNAME"));
+        }        
+        try {
+            Authentication authentication =
+                    authenticationManager.authenticate(
+                            new UsernamePasswordAuthenticationToken(
+                                    authUserDto.getUsername(), authUserDto.getPassword()));
 
-        String token = jwtGenerator.generateToken(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        Cookie cookie = new Cookie("__Host-auth-token", token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge((int) JwtGenerator.JWT_EXPIRATION_TIME.toSeconds());
+            String token = jwtGenerator.generateToken(authentication);
 
-        response.addCookie(cookie);
+            Cookie cookie = new Cookie("__Host-auth-token", token);
+            cookie.setHttpOnly(true);
+            cookie.setSecure(true);
+            cookie.setPath("/");
+            cookie.setMaxAge((int) JwtGenerator.JWT_EXPIRATION_TIME.toSeconds());
 
-        return ResponseEntity.ok(new AuthResponseDto(token));
+            response.addCookie(cookie);
+
+            return ResponseEntity.ok(new AuthResponseDto(token, null));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new AuthResponseDto(null, "WRONG_PASSWORD"));
+        }
     }
 
     public ResponseEntity<String> validateToken(String token) {

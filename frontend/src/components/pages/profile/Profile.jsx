@@ -63,8 +63,12 @@ const Profile = () => {
         <div>
             <div className="profile-container">
                 <div className="profile-header">Мой профиль</div>
-                <div>Имя: {username}</div>
-                <div>Уровень владения языком: {level}</div>
+                <div className="profile-row">
+                    Имя: {username}
+                </div>
+                <div className="profile-border">
+                    Уровень владения языком: {level}
+                </div>
                 <div>Цели изучения языка</div>
                 <div className="profile-list">
                     {goals.length === 0 ? (
