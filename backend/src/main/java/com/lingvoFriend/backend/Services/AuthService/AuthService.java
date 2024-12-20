@@ -97,9 +97,10 @@ public class AuthService {
         }
     }
 
-    public ResponseEntity<?> telegramLogin(TelegramAuthDto telegramAuth, HttpServletResponse response) {
+    public ResponseEntity<AuthResponseDto> telegramLogin(TelegramAuthDto telegramAuth, HttpServletResponse response) {
         if (!telegramAuthService.checkTelegramAuthorization(telegramAuth)) {
-            return new ResponseEntity<>("Invalid authorization", HttpStatus.UNAUTHORIZED);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new AuthResponseDto(null, "INVALID_AUTHORIZATION"));
         }
 
         String username = "telegram_" + telegramAuth.getId();
