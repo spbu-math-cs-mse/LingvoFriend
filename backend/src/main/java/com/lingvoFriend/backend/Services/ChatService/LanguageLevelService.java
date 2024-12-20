@@ -3,13 +3,24 @@ package com.lingvoFriend.backend.Services.ChatService;
 import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
 import com.lingvoFriend.backend.Services.ChatService.models.Message;
 import com.lingvoFriend.backend.Services.UserService.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
 @Service
 public class LanguageLevelService {
+    @Autowired private UserService userService;
+    @Autowired private LlmService llm;
+    @Autowired private MongoTemplate mongoTemplate;
+
+    private final Integer levelEvalQuestionsNumber = 5;
+
     public boolean isEvaluated(UserModel user) {
         Integer status = user.getLevelEvaluationQuestionsAsked();
         return status > levelEvalQuestionsNumber;
@@ -19,7 +30,8 @@ public class LanguageLevelService {
         Integer status = user.getLevelEvaluationQuestionsAsked();
         if (status.equals(0)) {
             startEvaluation(user);
-            String initialPrompt = "New user entered chat. Evaluate his level of English by asking questions. Now ask the first question.";
+            String initialPrompt =
+                    "New user entered chat. Evaluate his level of English by asking questions. Now ask the first question.";
             Message initMessage = new Message();
             initMessage.setRole("system");
             initMessage.setText(initialPrompt);
@@ -36,7 +48,8 @@ public class LanguageLevelService {
             return llm.generateLlmResponse(user);
         }
         if (status.equals(levelEvalQuestionsNumber)) {
-            String prompt = "User answered, now based on user's previous answers evaluate the user's level on the CEFR scale based on their answers. Just write A1, A2, B1, B2, C1, or C2 as an answer.";
+            String prompt =
+                    "User answered, now based on user's previous answers evaluate the user's level on the CEFR scale based on their answers. Just write A1, A2, B1, B2, C1, or C2 as an answer.";
             Message levelMessage = new Message();
             levelMessage.setRole("system");
             levelMessage.setText(prompt);
@@ -66,24 +79,30 @@ public class LanguageLevelService {
 
             return llm.generateLlmResponse(user);
         }
-        throw new IllegalStateException("evaluate must not be called if user has already been evaluated");
+        throw new IllegalStateException(
+                "evaluate must not be called if user has already been evaluated");
     }
 
     private void questionsAskedPlusOne(UserModel user) {
-        user.setLevelEvaluationQuestionsAsked(user.getLevelEvaluationQuestionsAsked() + 1);
-        user.setCefrLevel(null);
-        userService.getUserRepository().save(user);
+        Query query = new Query(Criteria.where("_id").is(user.getId()));
+        Update update =
+                new Update()
+                        .set(
+                                "levelEvaluationQuestionsAsked",
+                                user.getLevelEvaluationQuestionsAsked() + 1);
+        mongoTemplate.updateFirst(query, update, UserModel.class);
     }
 
     private void startEvaluation(UserModel user) {
-        user.setLevelEvaluationQuestionsAsked(1);
-        user.setCefrLevel(null);
-        userService.getUserRepository().save(user);
+        Query query = new Query(Criteria.where("_id").is(user.getId()));
+        Update update = new Update().set("levelEvaluationQuestionsAsked", 1);
+        mongoTemplate.updateFirst(query, update, UserModel.class);
     }
 
     private void setCefrLevel(UserModel user, String level) {
-        user.setCefrLevel(level);
-        userService.getUserRepository().save(user);
+        Query query = new Query(Criteria.where("_id").is(user.getId()));
+        Update update = new Update().set("cefrLevel", level);
+        mongoTemplate.updateFirst(query, update, UserModel.class);
     }
 
     private String extractCEFRLevel(String text) {

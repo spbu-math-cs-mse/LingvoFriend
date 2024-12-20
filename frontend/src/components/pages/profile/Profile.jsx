@@ -74,10 +74,10 @@ const Profile = () => {
                     withCredentials: true,
                 }
             );
-            toast.info("Preferences saved successfully!");
+            toast.info("Успешно сохранено!");
             setInitialLanguagePreference(languagePreference); // Update initial preference
         } catch (err) {
-            toast.error("Failed to save preferences.");
+            toast.error("Ошибка при сохранении!");
             console.error("Error saving preferences:", err);
             setError("Failed to save preferences.");
         }

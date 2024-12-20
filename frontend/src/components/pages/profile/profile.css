@@ -45,21 +45,30 @@
         padding-bottom: 15px;
 }
 
+.language-select{
+        padding: 10px 15px;
+        border-radius: 15px;
+        width: fit-content;
+}
+
 .save-button {
         margin-top: 10px;
-        padding: 10px 20px;
-        font-size: 1em;
+        padding: 10px 15px;
+        font-size: 0.7em;
         color: white;
-        background-color: #6843ec;
+        background-color: #FD90A7;
         border: none;
-        border-radius: 5px;
+        border-radius: 15px;
         cursor: pointer;
         display: block;
+        width: 20%;
 }
 
 .save-button:hover {
-        background-color: #593bd1;
+        background-color: #d67a8e;
 }
+
+
 
 @media (max-width:1200px) {
         .profile-list li, .save-button {
