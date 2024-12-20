@@ -40,8 +40,8 @@ function App() {
                             },
                             credentials: "include",
                             body: JSON.stringify({
-                                username: "idkidk",
-                                password: "pass",
+                                username: username,
+                                password: userId,
                             }),
                         }
                     );
