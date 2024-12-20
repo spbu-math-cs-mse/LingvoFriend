@@ -82,4 +82,15 @@ public class UserService {
         UserModel user = findOrThrow(username);
         return user.getCefrLevel();
     }
+
+    public String getDialect(String username) {
+        UserModel user = findOrThrow(username);
+        return user.getDialect();
+    }
+
+    public void setDialect(String username, String dialect) {
+        UserModel user = findOrThrow(username);
+        user.setDialect(dialect);
+        userRepository.save(user);
+    }
 }
