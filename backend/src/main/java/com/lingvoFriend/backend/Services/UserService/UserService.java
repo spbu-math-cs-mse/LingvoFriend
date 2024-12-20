@@ -105,4 +105,15 @@ public class UserService {
     public long countMeaningfulMessages(UserModel user) {
         return user.getMessages().stream().filter(message -> !message.isSystem()).count();
     }
+
+    public String getDialect(String username) {
+        UserModel user = findOrThrow(username);
+        return user.getDialect();
+    }
+
+    public void setDialect(String username, String dialect) {
+        UserModel user = findOrThrow(username);
+        user.setDialect(dialect);
+        userRepository.save(user);
+    }
 }
