@@ -44,9 +44,7 @@ function App() {
                         }
                     );
 
-                    if (response.ok) {
-                        window.location.href = "/home";
-                    } else {
+                    if (!response.ok) {
                         const errorData = await response.json();
                         if (
                             response.status === 400 &&
@@ -106,9 +104,22 @@ function App() {
                         </PublicRoute>
                     }
                 />
-                <Route path="/login" element={<LoginForm />} />
-                <Route path="/register" element={<RegisterForm />} />
-
+                <Route
+                    path="/login"
+                    element={
+                        <PublicRoute>
+                            <LoginForm />
+                        </PublicRoute>
+                    }
+                />
+                <Route
+                    path="/register"
+                    element={
+                        <PublicRoute>
+                            <RegisterForm />
+                        </PublicRoute>
+                    }
+                />
                 <Route
                     path="/questionnaire"
                     element={
