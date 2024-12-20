@@ -22,7 +22,7 @@ public class ChatService {
     @Autowired private LlmReminderService llmReminderService;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final Integer messageRetentionLimit = 70;
+    private final Integer messageRetentionLimit = 50;
 
     public String chat(UserMessageDto userMessageDto) {
         UserModel user = userService.findOrThrow(userMessageDto.getUsername());

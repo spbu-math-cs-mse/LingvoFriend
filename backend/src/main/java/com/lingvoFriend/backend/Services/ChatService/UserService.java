@@ -81,7 +81,7 @@ public class UserService {
     }
 
     public void clearMessages(UserModel user) {
-        int lastMessagesSize = 30;
+        int lastMessagesSize = 25;
         List<Message> lastMessages =
                 user.getMessages()
                         .subList(
