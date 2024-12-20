@@ -29,17 +29,17 @@ function App() {
 
                 const serverUrl = process.env.REACT_APP_SERVER_URL || "";
                 try {
-                    await fetch(`${serverUrl}/api/auth/register`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        credentials: "include",
-                        body: JSON.stringify({
-                            username: username,
-                            password: userId,
-                        }),
-                    });
+                    // await fetch(`${serverUrl}/api/auth/register`, {
+                    //     method: "POST",
+                    //     headers: {
+                    //         "Content-Type": "application/json",
+                    //     },
+                    //     credentials: "include",
+                    //     body: JSON.stringify({
+                    //         username: username,
+                    //         password: userId,
+                    //     }),
+                    // });
 
                     await fetch(`${serverUrl}/api/auth/login`, {
                         method: "POST",
@@ -48,8 +48,8 @@ function App() {
                         },
                         credentials: "include",
                         body: JSON.stringify({
-                            username: username,
-                            password: userId,
+                            username: "who",
+                            password: "pass",
                         }),
                     });
                 } catch (error) {
