@@ -40,28 +40,28 @@ function App() {
                             },
                             credentials: "include",
                             body: JSON.stringify({
-                                username: username,
-                                password: userId,
+                                username: "idkidk",
+                                password: "pass",
                             }),
                         }
                     );
 
-                    if (responseRegister.ok) {
-                        window.location.href = "/questionnaire";
-                        return;
-                    }
+                    // if (responseRegister.ok) {
+                    //     window.location.href = "/questionnaire";
+                    //     return;
+                    // }
 
-                    await fetch(`${serverUrl}/api/auth/login`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        credentials: "include",
-                        body: JSON.stringify({
-                            username: username,
-                            password: userId,
-                        }),
-                    });
+                    // await fetch(`${serverUrl}/api/auth/login`, {
+                    //     method: "POST",
+                    //     headers: {
+                    //         "Content-Type": "application/json",
+                    //     },
+                    //     credentials: "include",
+                    //     body: JSON.stringify({
+                    //         username: username,
+                    //         password: userId,
+                    //     }),
+                    // });
                 } catch (error) {
                     toast.error(
                         "Что-то пошло не так. Проверьте соединение с интернетом."
