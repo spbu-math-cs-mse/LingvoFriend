@@ -204,17 +204,10 @@ public class Bot extends TelegramLongPollingBot {
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> keyboard = new ArrayList<>();
 
-        KeyboardRow row1 = new KeyboardRow();
-        row1.add(new KeyboardButton("Чат"));
+        KeyboardRow row = new KeyboardRow();
+        row.add(new KeyboardButton("Чат"));
 
-        KeyboardButton webAppButton = new KeyboardButton("Приложение");
-        WebAppInfo webAppInfo = new WebAppInfo();
-        webAppInfo.setUrl(frontendUrl + "/telegram-auth");
-        webAppButton.setWebApp(webAppInfo);
-
-        row1.add(webAppButton);
-
-        keyboard.add(row1);
+        keyboard.add(row);
 
         keyboardMarkup.setKeyboard(keyboard);
         keyboardMarkup.setResizeKeyboard(true);
