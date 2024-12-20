@@ -10,6 +10,11 @@ import java.util.Random;
 
 @Service
 public class LanguageLevelService {
+    @Autowired private UserService userService;
+    @Autowired private LlmService llm;
+
+    private final Integer levelEvalQuestionsNumber = 5;
+
     public boolean isEvaluated(UserModel user) {
         Integer status = user.getLevelEvaluationQuestionsAsked();
         return status > levelEvalQuestionsNumber;
@@ -104,9 +109,4 @@ public class LanguageLevelService {
         int index = random.nextInt(cefrLevels.length);
         return cefrLevels[index];
     }
-
-    private final Integer levelEvalQuestionsNumber = 5;
-
-    @Autowired private UserService userService;
-    @Autowired private LlmService llm;
 }

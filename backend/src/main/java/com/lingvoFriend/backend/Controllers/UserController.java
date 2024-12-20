@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/profile")
-class UserProfileController {
+class UserController {
 
     @Autowired private UserService userService;
 
