@@ -97,13 +97,6 @@ function App() {
 
     return (
         <Router>
-            <div>
-                {isMiniApp ? (
-                    <h1>hey, it's Mini App!</h1>
-                ) : (
-                    <h1>hey, it's Browser Version!</h1>
-                )}
-            </div>
             <Routes>
                 <Route
                     path="/"
