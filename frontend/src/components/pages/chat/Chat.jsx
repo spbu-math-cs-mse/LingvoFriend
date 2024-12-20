@@ -6,49 +6,99 @@ import BottomBar from "../../bottomBar/BottomBar";
 import ReactTooltip from "react-tooltip";
 import "./chat.css";
 
+const DialogWord = ({ segment, index }) => {
+    const [translation, setTranslation] = useState(null);
+    const [isLoadingWord, setIsLoadingWord] = useState(null);
+    const tooltipId = `tooltip-${index}-${segment}`;
+    const [open, setOpen] = React.useState(false);
+    const serverUrl = process.env.REACT_APP_SERVER_URL || "";
+
+    if (segment.trim() === "" || /[.,!?;:()]/.test(segment)) {
+        return segment;
+    }
+
+    const handleWordClick = async (word) => {
+        if (translation) return;
+        setIsLoadingWord(true);
+
+        try {
+            const response = await axios.post(
+                "https://api-free.deepl.com/v2/translate",
+                null,
+                {
+                    params: {
+                        auth_key: "805412aa-0cfc-4096-b255-74aaf6f8fbae:fx",
+                        text: word,
+                        target_lang: "RU",
+                        source_lang: "EN",
+                    },
+                }
+            );
+
+            const requestBody = {
+                word: word,
+            };
+
+            await axios.post(`${serverUrl}/api/saveUnknownWord`, requestBody, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                withCredentials: true,
+            });
+
+            const translatedText = response.data.translations[0].text;
+            setTranslation(translatedText);
+        } catch (error) {
+            console.error("Translation error:", error);
+            setTranslation("Translation unavailable");
+        } finally {
+            setIsLoadingWord(false);
+        }
+    };
+
+    return (
+        <span
+            key={index}
+            className="clickable-word"
+            onClick={() => handleWordClick(segment)}
+            data-tip
+            data-for={tooltipId}
+            onMouseEnter={() => !open && setOpen(true)}
+        >
+            {segment}
+            {open && (
+                <ReactTooltip
+                    id={tooltipId}
+                    place="top"
+                    effect="solid"
+                    className="tooltip-translation"
+                    open={open}
+                >
+                    {isLoadingWord
+                        ? "Loading..."
+                        : translation
+                        ? translation
+                        : "Нажмите на слово, чтобы перевести"}
+                </ReactTooltip>
+            )}
+        </span>
+    );
+};
+
 const Chat = () => {
     const [messages, setMessages] = useState([]);
-    const [username, setUsername] = useState(null);
     const [input, setInput] = useState("");
     const chatEndRef = useRef(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [translations, setTranslations] = useState({});
-    const [loadingWords, setLoadingWords] = useState({});
 
     const serverUrl = process.env.REACT_APP_SERVER_URL || "";
 
     useEffect(() => {
-        const fetchUsername = async () => {
-            try {
-                const response = await axios.get(
-                    `${serverUrl}/api/jwt/username`,
-                    {
-                        withCredentials: true,
-                    }
-                );
-
-                setUsername(response.data);
-            } catch (error) {
-                console.error("Ошибка при получении username:", error);
-            }
-        };
-
-        fetchUsername();
-    }, [serverUrl]);
-
-    useEffect(() => {
         const fetchChatHistory = async () => {
-            if (!username) {
-                return;
-            }
-
             try {
-                const response = await axios.get(
-                    `${serverUrl}/api/history/${username}`,
-                    {
-                        withCredentials: true,
-                    }
-                );
+                const response = await axios.get(`${serverUrl}/api/history`, {
+                    withCredentials: true,
+                });
                 const chatHistory = response.data;
                 if (chatHistory.length === 0) {
                     const welcomeMessage = {
@@ -64,10 +114,8 @@ const Chat = () => {
             }
         };
 
-        if (username) {
-            fetchChatHistory();
-        }
-    }, [username, serverUrl]);
+        fetchChatHistory();
+    }, [serverUrl]);
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -85,7 +133,6 @@ const Chat = () => {
 
         try {
             const requestBody = {
-                username: username,
                 message: {
                     role: "user",
                     text: input,
@@ -139,39 +186,12 @@ const Chat = () => {
         setInput(textarea.value);
     };
 
-    const handleWordClick = async (word) => {
-        if (translations[word]) {
-            return;
-        }
-
-        setLoadingWords((prev) => ({ ...prev, [word]: true }));
-
-        try {
-            const response = await axios.post("https://api-free.deepl.com/v2/translate", null, {
-                params: {
-                    auth_key: "805412aa-0cfc-4096-b255-74aaf6f8fbae:fx",
-                    text: word,
-                    target_lang: "RU",
-                    source_lang: "EN"
-                },
-            });
-
-            const translatedText = response.data.translations[0].text;
-            setTranslations((prev) => ({ ...prev, [word]: translatedText }));
-        } catch (error) {
-            console.error("Translation error:", error);
-            setTranslations((prev) => ({ ...prev, [word]: "Translation unavailable" }));
-        } finally {
-            setLoadingWords((prev) => ({ ...prev, [word]: false }));
-        }
-    };
-
     const extractText = (children) => {
         if (typeof children === "string") {
             return children;
         }
         if (Array.isArray(children)) {
-            return children.map(child => extractText(child)).join(" ");
+            return children.map((child) => extractText(child)).join(" ");
         }
         if (children.props && children.props.children) {
             return extractText(children.props.children);
@@ -181,46 +201,13 @@ const Chat = () => {
 
     useEffect(() => {
         ReactTooltip.rebuild();
-    }, [messages, translations, loadingWords]);
+    }, [messages]);
 
     const renderMessage = (text) => {
         const messageText = extractText(text) || "";
-
         const wordsAndPunctuations = messageText.split(/(\s+|[.,!?;:()])/);
-
         return wordsAndPunctuations.map((segment, index) => {
-            if (segment.trim() === "" || /[.,!?;:()]/.test(segment)) {
-                return segment;
-            }
-
-            const translation = translations[segment];
-            const isLoadingWord = loadingWords[segment];
-            const tooltipId = `tooltip-${index}-${segment}`;
-
-            return (
-                <span
-                    key={index}
-                    className="clickable-word"
-                    onMouseOver={() => handleWordClick(segment)}
-                    data-tip
-                    data-for={tooltipId}
-                    data-event="click"
-                >
-                    {segment}
-                    <ReactTooltip
-                        id={tooltipId}
-                        place="top"
-                        effect="solid"
-                        className="tooltip-translation"
-                    >
-                        {isLoadingWord
-                            ? "Loading..."
-                            : translation
-                                ? translation
-                                : "error"}
-                    </ReactTooltip>
-                </span>
-            );
+            return <DialogWord segment={segment} index={index} />;
         });
     };
 
@@ -244,7 +231,11 @@ const Chat = () => {
                                     children={msg.text}
                                     remarkPlugins={[remarkGfm]}
                                     components={{
-                                        p: ({ node, ...props }) => <p>{renderMessage(props.children)}</p>,
+                                        p: ({ node, ...props }) => (
+                                            <p>
+                                                {renderMessage(props.children)}
+                                            </p>
+                                        ),
                                     }}
                                 />
                             )}

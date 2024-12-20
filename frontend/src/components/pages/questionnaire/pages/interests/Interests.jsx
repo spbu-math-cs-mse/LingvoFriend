@@ -37,17 +37,7 @@ const Interests = ({ username, progress, onNextStep, onSubmit }) => {
         const serverUrl = process.env.REACT_APP_SERVER_URL || "";
 
         try {
-            const usernameResponse = await axios.get(
-                `${serverUrl}/api/jwt/username`,
-                {
-                    withCredentials: true,
-                }
-            );
-
-            const username = usernameResponse.data;
-
             const requestBody = {
-                username: username,
                 interests: selectedInterests,
             };
 
@@ -92,7 +82,6 @@ const Interests = ({ username, progress, onNextStep, onSubmit }) => {
             </div>
 
             <div className="questionnaire-next-button-container">
-                <div className="line-above-button"></div>
                 <button
                     className="questionnaire-next-button"
                     onClick={() => {

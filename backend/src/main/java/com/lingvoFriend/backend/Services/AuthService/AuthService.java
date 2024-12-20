@@ -1,5 +1,8 @@
 package com.lingvoFriend.backend.Services.AuthService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.lingvoFriend.backend.Repositories.RoleRepository;
 import com.lingvoFriend.backend.Repositories.UserRepository;
 import com.lingvoFriend.backend.Security.JwtGenerator;
@@ -13,6 +16,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,8 +25,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.lingvoFriend.backend.Repositories.RoleRepository;
+import com.lingvoFriend.backend.Repositories.UserRepository;
+import com.lingvoFriend.backend.Security.JwtGenerator;
+import com.lingvoFriend.backend.Services.AuthService.dto.AuthResponseDto;
+import com.lingvoFriend.backend.Services.AuthService.dto.AuthUserDto;
+import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
@@ -37,7 +49,7 @@ public class AuthService {
 
     public ResponseEntity<?> register(AuthUserDto authUserDto, HttpServletResponse response) {
         if (userRepository.existsByUsername(authUserDto.getUsername())) {
-            return new ResponseEntity<>("Username is taken", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("USERNAME_TAKEN", HttpStatus.BAD_REQUEST);
         }
 
         UserModel userModel =
@@ -54,61 +66,35 @@ public class AuthService {
 
     public ResponseEntity<AuthResponseDto> login(
             @RequestBody AuthUserDto authUserDto, HttpServletResponse response) {
-        Authentication authentication =
-                authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(
-                                authUserDto.getUsername(), authUserDto.getPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String token = jwtGenerator.generateToken(authentication);
-
-        Cookie cookie = new Cookie("__Host-auth-token", token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge((int) JwtGenerator.JWT_EXPIRATION_TIME.toSeconds());
-
-        response.addCookie(cookie);
-
-        return ResponseEntity.ok(new AuthResponseDto(token));
-    }
-
-    public ResponseEntity<?> telegramLogin(TelegramAuthDto telegramAuth, HttpServletResponse response) {
-        if (!telegramAuthService.checkTelegramAuthorization(telegramAuth)) {
-            return new ResponseEntity<>("Invalid authorization", HttpStatus.UNAUTHORIZED);
+        if (!userRepository.existsByUsername(authUserDto.getUsername())) {
+            return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new AuthResponseDto(null, "WRONG_USERNAME"));
         }
+        try {
+            Authentication authentication =
+                    authenticationManager.authenticate(
+                            new UsernamePasswordAuthenticationToken(
+                                    authUserDto.getUsername(), authUserDto.getPassword()));
 
-        String username = "telegram_" + telegramAuth.getId();
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // Create user if doesn't exist
-        if (!userRepository.existsByUsername(username)) {
-            UserModel userModel = new UserModel(
-                    username,
-                    passwordEncoder.encode(telegramAuth.getHash()), // Use hash as password
-                    new ArrayList<>(List.of(roleRepository.findByRoleName("USER"))),
-                    new ArrayList<>()
-            );
-            userRepository.save(userModel);
+            String token = jwtGenerator.generateToken(authentication);
+
+            Cookie cookie = new Cookie("__Host-auth-token", token);
+            cookie.setHttpOnly(true);
+            cookie.setSecure(true);
+            cookie.setPath("/");
+            cookie.setMaxAge((int) JwtGenerator.JWT_EXPIRATION_TIME.toSeconds());
+
+            response.addCookie(cookie);
+
+            return ResponseEntity.ok(new AuthResponseDto(token, null));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new AuthResponseDto(null, "WRONG_PASSWORD"));
         }
-
-        // Create authentication token
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, telegramAuth.getHash())
-        );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = jwtGenerator.generateToken(authentication);
-
-        Cookie cookie = new Cookie("__Host-auth-token", token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge((int) JwtGenerator.JWT_EXPIRATION_TIME.toSeconds());
-
-        response.addCookie(cookie);
-
-        return ResponseEntity.ok(new AuthResponseDto(token));
     }
 
     public ResponseEntity<String> validateToken(String token) {
@@ -119,8 +105,7 @@ public class AuthService {
         }
     }
 
-    public ResponseEntity<String> getUsernameFromToken(String token) {
-        String username = jwtGenerator.getUsernameFromToken(token);
-        return ResponseEntity.ok().body(username);
+    public String getUsernameFromToken(String token) {
+        return jwtGenerator.getUsernameFromToken(token);
     }
 }
