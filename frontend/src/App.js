@@ -14,6 +14,7 @@ import Store from "./components/pages/store/Store";
 import { useState } from "react";
 import Questionnaire from "./components/pages/questionnaire/Questionnaire";
 import useAuth from "./components/authForm/useAuth";
+import TelegramAuthForm from "./components/authForm/TelegramAuthForm";
 
 function App() {
     const [username, setUsername] = useState(null);
@@ -93,6 +94,14 @@ function App() {
                         <PrivateRoute>
                             <Store />
                         </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/telegram-auth"
+                    element={
+                        <PublicRoute>
+                            <TelegramAuthForm />
+                        </PublicRoute>
                     }
                 />
             </Routes>
