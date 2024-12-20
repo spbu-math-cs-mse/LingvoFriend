@@ -51,12 +51,12 @@ public class LanguageLevelService {
             String userPreferences = userService.constructUserPreferencesString(user);
 
             String topicPrompt = "Do not answer about CEFR level, it is no longer needed. " +
-                    "From now on just chat with the user in English, notice that you should not answer in any other language except the situations when user asks for it explicitly. " +
-                    "The user has the following goals: " + userGoals + ". " +
-                    "The user's preferred topics are: " + userPreferences + ". " +
-                    "Start the conversation by discussing one of these topics." +
-                    "Talk with user as if you were native " + (userDialect.equals("british") ? "British" : "American") + " speaker.";
-            
+                                "From now on just chat with the user in English, notice that you should not answer in any other language except the situations when user asks for it explicitly. " +
+                                "The user has the following goals: " + userGoals + ". " +
+                                "The user's preferred topics are: " + userPreferences + ". " +
+                                "Start the conversation by discussing one of these topics." +
+                                "Talk with user as if you were native " + (userDialect.equals("british") ? "British" : "American") + " speaker.";
+
             Message topicMsg = new Message();
             topicMsg.setRole("system");
             topicMsg.setText(topicPrompt);

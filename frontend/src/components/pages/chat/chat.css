@@ -7,7 +7,7 @@
     transform: translate(-50%);
     display: flex;
     flex-direction: column;
-    color: white;
+    color: var(--white-secondary);
     font-family: Arial, sans-serif;
     padding-bottom: 100px;
 }
@@ -25,7 +25,7 @@
     padding: 10px 15px;
     border-radius: 15px;
     max-width: 70%;
-    color: black;
+    color: var(--black-primary);
 }
 
 .message-bubble ol {
@@ -41,13 +41,13 @@
 }
 
 .user-message {
-    background-color: #ffb300;
-    color: white;
+    background-color: var(--green-primary);
+    color: var(--black-primary);
     align-self: flex-end;
 }
 
 .assistant-message {
-    background-color: #f6f6f6;
+    background-color: var(--gray-secondary);
     align-self: flex-start;
 }
 
@@ -60,10 +60,10 @@
 .input-bar textarea {
     flex: 1 1;
     padding: 12px 16px;
-    border: 3px solid #f2f2f2;
+    border: 3px solid var(--gray-secondary);
     border-radius: 1.5rem;
-    background-color: #f2f2f2;
-    color: black;
+    background-color: var(--gray-secondary);
+    color: var(--black-primary);
     font-size: 14px;
     outline: none;
     resize: none;
@@ -82,7 +82,7 @@
     margin-top: 0;
     border: none;
     border-radius: 50%;
-    background-color: #ffb300;
+    background-color: var(--green-primary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -92,7 +92,7 @@
 }
 
 .input-bar button:hover {
-    background-color: #eaa000;
+    background-color: var(--pink-secondary);
     box-shadow: none;
     transform: none;
 }
@@ -107,7 +107,7 @@
     align-items: center;
     justify-content: flex-start;
     padding: 10px 15px;
-    background-color: #f2f2f2;
+    background-color: var(--gray-secondary);
     border-radius: 15px;
     width: fit-content;
     max-width: 70%;
@@ -118,7 +118,7 @@
     width: 8px;
     height: 8px;
     margin: 0 4px;
-    background-color: #696969;
+    background-color: var(--black-primary);
     border-radius: 50%;
     animation: typing 1.5s infinite;
 }

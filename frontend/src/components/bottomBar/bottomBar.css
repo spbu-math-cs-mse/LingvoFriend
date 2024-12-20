@@ -3,7 +3,7 @@
     bottom: 1.5rem;
     left: 0;
     right: 0;
-    background-color: var(--black-color);
+    background-color: var(--black-primary);
     width: 88%;
     margin-inline: auto;
     box-shadow: 0 2px 16px hsla(228, 95%, 4%, 0.1);
@@ -19,17 +19,17 @@
 }
 
 .nav_link {
-    color: var(--text-color);
+    color: var(--gray-secondary);
     text-decoration: none;
     font-size: 1.5rem;
     transition: color 0.4s;
 
-    background-color: var(--black-color);
+    background-color: var(--black-primary);
     border: none;
 }
 
 .nav_link:hover {
-    color: var(--white-color);
+    color: var(--white-secondary);
 }
 
 ul {

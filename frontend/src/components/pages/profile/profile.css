@@ -7,7 +7,7 @@
         transform: translate(-50%);
         display: flex;
         flex-direction: column;
-        color: black;
+        color: var(--black-primary);
         font-family: Arial, sans-serif;
         overflow-y: auto;
         font-size: 1.5em;
@@ -19,6 +19,7 @@
 .profile-header {
         font-size: 1.8em;
         padding-bottom: 20px;
+        color: var(--green-primary);
 }
 
 .profile-list {
@@ -32,9 +33,16 @@
         padding: 10px 15px;
         border-radius: 15px;
         width: 20%;
-        background-color: #ffb300;
-        color: white;
+        background-color: var(--blue-primary);
+        color: var(--white-secondary);
         font-size: 0.7em;
+}
+.profile-row {
+        padding-bottom: 5px;
+}
+
+.profile-border {
+        padding-bottom: 15px;
 }
 
 .save-button {
@@ -61,6 +69,12 @@
 @media (max-width:600px) {
         .profile-list li {
                 width: auto;
+        }
+        .profile-header {
+                font-size: 1.5em;
+        }
+        .profile-container {
+                font-size: 1.3em;
         }
 }
 

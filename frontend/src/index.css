@@ -7,6 +7,12 @@
     --white-color: hsl(0, 0%, 100%);
     --text-color: hsl(225, 8%, 65%);
     --body-color: hsl(225, 100%, 99%);
+    --blue-primary: #6843EC;
+    --green-primary: #D2FF3A;
+    --black-primary: #212121;
+    --pink-secondary: #FD90A7;
+    --gray-secondary: #EEEEEE;
+    --white-secondary: #fff;    
 }
 
 * {
@@ -30,4 +36,8 @@ body {
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
         monospace;
+}
+
+.Toastify__toast--error {
+    background-color: #fff !important;
 }

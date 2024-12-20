@@ -16,7 +16,7 @@
     margin: 0 10px 0 0;
     background: transparent;
     border: none;
-    color: #333;
+    color: var(--black-primary);
     cursor: pointer;
     font-size: 1em;
     font-weight: bold;
@@ -38,7 +38,7 @@
 
 .questionnaire-question {
     font-size: 1.8rem;
-    color: #333;
+    color: var(--black-primary);
     text-align: center;
     margin: 35px 0;
     width: 100%;
@@ -73,9 +73,9 @@
     width: 100%;
     height: 70px;
     background-color: white;
-    border: 2px solid #ffb300;
+    border: 3px solid var(--green-primary);
     border-radius: 8px;
-    color: #333;
+    color: var(--black-primary);
     font-size: 1.2rem;
     font-weight: bold;
     cursor: pointer;
@@ -89,8 +89,8 @@
 }
 
 .questionnaire-button.selected {
-    background-color: #ffb300;
-    color: white;
+    background-color: var(--green-primary);
+    color: var(--black-primary);
 }
 
 .questionnaire-button:active {
@@ -103,17 +103,17 @@
     left: 0;
     height: 15%;
     width: 100%;
-    background-color: white;
+    background-color: var(--white-secondary);
     border-top: 1px solid #ccc;
 }
 
 .questionnaire-next-button {
     width: 7%;
     height: 45px;
-    background: #ffb300;
+    background: var(--green-primary);
     border: none;
     border-radius: 8px;
-    color: white;
+    color: var(--black-primary);
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;

@@ -7,7 +7,7 @@
 .brand-name {
     font-size: 24px;
     font-weight: bold;
-    color: #ffb300;
+    color: var(--blue-primary);
 }
 
 .main-content {
@@ -21,7 +21,7 @@
 .title {
     font-size: 28px;
     font-weight: bold;
-    color: #333;
+    color: var(--black-primary);
     margin-bottom: 30px;
 }
 
@@ -52,14 +52,13 @@
 }
 
 .welcome-btn-primary {
-    background: #ffb300;
-    color: white;
+    background: var(--green-primary);
+    color: var(--black-primary);
 }
 
 .welcome-btn-secondary {
-    background-color: #ffffff;
-    color: #ffb300;
-    border: 2px solid #ffb300;
+    background-color: var(--blue-primary);
+    color: var(--white-secondary);
 }
 
 .welcome-btn:hover {
