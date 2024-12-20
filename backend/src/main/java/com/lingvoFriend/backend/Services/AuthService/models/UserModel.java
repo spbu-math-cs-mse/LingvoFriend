@@ -40,10 +40,10 @@ public class UserModel {
     private String englishExperience;
     private QuestionState questionState = QuestionState.NOT_STARTED;
 
-    private String dialect = "british"; // British or American, default British
-
     private Integer levelEvaluationQuestionsAsked = 0;
     private String cefrLevel;
+
+    private String dialect = "british";
 
     public UserModel(
             String username, String password, List<RoleModel> roles, List<Message> messages) {

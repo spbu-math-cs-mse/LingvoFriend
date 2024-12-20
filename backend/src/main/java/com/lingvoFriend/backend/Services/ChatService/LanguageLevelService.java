@@ -2,6 +2,7 @@ package com.lingvoFriend.backend.Services.ChatService;
 
 import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
 import com.lingvoFriend.backend.Services.ChatService.models.Message;
+import com.lingvoFriend.backend.Services.UserService.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +50,7 @@ public class LanguageLevelService {
 
             String userGoals = userService.constructUserGoalsString(user);
             String userPreferences = userService.constructUserPreferencesString(user);
+            String userDialect = user.getDialect();
 
             String topicPrompt = "Do not answer about CEFR level, it is no longer needed. " +
                                 "From now on just chat with the user in English, notice that you should not answer in any other language except the situations when user asks for it explicitly. " +

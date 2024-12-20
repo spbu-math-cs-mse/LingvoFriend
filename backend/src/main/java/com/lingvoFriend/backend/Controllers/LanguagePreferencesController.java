@@ -2,8 +2,8 @@ package com.lingvoFriend.backend.Controllers;
 
 import lombok.Getter;
 
-import com.lingvoFriend.backend.Services.ChatService.UserService;
-import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
+import com.lingvoFriend.backend.Services.UserService.UserService;
+import com.lingvoFriend.backend.Services.UserService.dto.UserProfileDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
