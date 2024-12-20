@@ -74,8 +74,13 @@ public class Bot extends TelegramLongPollingBot {
                 return;
             }
         }
-
-        if ((userMessage.equals("Чат") || userMessage.equals("/chat")) && !usersInChatMode.contains(chatId)) {
+        if (userMessage.equals("/start")) {
+            sendMessage(chatId, "Welcome to LingvoFriend! Use /chat to start chatting with AI");
+            if (usersInChatMode.contains(chatId)) {
+                usersInChatMode.remove(chatId);
+            }
+            return;
+        } if ((userMessage.equals("Чат") || userMessage.equals("/chat")) && !usersInChatMode.contains(chatId)) {
             usersInChatMode.add(chatId);
             ReplyKeyboardMarkup keyboardMarkup = createChatKeyboard();
             SendMessage sendMessage = SendMessage.builder()
