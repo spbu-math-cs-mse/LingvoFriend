@@ -20,6 +20,8 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
         const checkIsMiniApp = async () => {
             if (window.TelegramWebviewProxy) {
@@ -58,6 +60,7 @@ function App() {
                     );
                 }
             }
+            setLoading(false);
         };
 
         checkIsMiniApp();
@@ -82,6 +85,10 @@ function App() {
 
         return isAuthenticated ? <Navigate to="/chat" /> : children;
     };
+
+    if (loading) {
+        return <div>Загрузка...</div>;
+    }
 
     return (
         <Router>
