@@ -5,6 +5,7 @@ import com.lingvoFriend.backend.Services.ChatService.dto.WordsReminderDto;
 import com.lingvoFriend.backend.Services.ChatService.models.Message;
 import com.lingvoFriend.backend.Services.ChatService.models.Word;
 
+import com.lingvoFriend.backend.Services.UserService.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

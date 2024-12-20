@@ -4,6 +4,7 @@ import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
 import com.lingvoFriend.backend.Services.ChatService.dto.UserMessageDto;
 import com.lingvoFriend.backend.Services.ChatService.models.Message;
 
+import com.lingvoFriend.backend.Services.UserService.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lingvoFriend.backend.Services.ChatService.UserService;
+import com.lingvoFriend.backend.Services.UserService.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -19,12 +19,11 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequestMapping("/api/profile")
 class UserProfileController {
 
-    @Autowired
-    private UserService userService;
+    @Autowired private UserService userService;
 
     @GetMapping("/goals/{username}")
     public ResponseEntity<List<String>> getGoalsInfo(
-        HttpServletRequest request, @PathVariable String username) {
+            HttpServletRequest request, @PathVariable String username) {
         try {
             List<String> goals = userService.getGoals(username);
             return ResponseEntity.ok(goals);
@@ -37,7 +36,7 @@ class UserProfileController {
 
     @GetMapping("/interests/{username}")
     public ResponseEntity<List<String>> getInterestsInfo(
-        HttpServletRequest request, @PathVariable String username) {
+            HttpServletRequest request, @PathVariable String username) {
         try {
             List<String> interests = userService.getInterests(username);
             return ResponseEntity.ok(interests);
@@ -50,11 +49,11 @@ class UserProfileController {
 
     @GetMapping("/level/{username}")
     public ResponseEntity<String> getLevelInfo(
-        HttpServletRequest request, @PathVariable String username) {
+            HttpServletRequest request, @PathVariable String username) {
         try {
             String level = userService.getLevel(username);
             if (level == null || level.isEmpty()) {
-                return ResponseEntity.ok("unknown"); 
+                return ResponseEntity.ok("unknown");
             }
             return ResponseEntity.ok(level);
         } catch (BadCredentialsException e) {
@@ -63,5 +62,4 @@ class UserProfileController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
 }

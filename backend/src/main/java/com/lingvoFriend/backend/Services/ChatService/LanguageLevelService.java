@@ -2,6 +2,7 @@ package com.lingvoFriend.backend.Services.ChatService;
 
 import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
 import com.lingvoFriend.backend.Services.ChatService.models.Message;
+import com.lingvoFriend.backend.Services.UserService.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,8 @@ public class LanguageLevelService {
         Integer status = user.getLevelEvaluationQuestionsAsked();
         if (status.equals(0)) {
             startEvaluation(user);
-            String initialPrompt = "New user entered chat. Evaluate his level of English by asking questions. Now ask the first question.";
+            String initialPrompt =
+                    "New user entered chat. Evaluate his level of English by asking questions. Now ask the first question.";
             Message initMessage = new Message();
             initMessage.setRole("system");
             initMessage.setText(initialPrompt);
@@ -35,7 +37,8 @@ public class LanguageLevelService {
             return llm.generateLlmResponse(user);
         }
         if (status.equals(levelEvalQuestionsNumber)) {
-            String prompt = "User answered, now based on user's previous answers evaluate the user's level on the CEFR scale based on their answers. Just write A1, A2, B1, B2, C1, or C2 as an answer.";
+            String prompt =
+                    "User answered, now based on user's previous answers evaluate the user's level on the CEFR scale based on their answers. Just write A1, A2, B1, B2, C1, or C2 as an answer.";
             Message levelMessage = new Message();
             levelMessage.setRole("system");
             levelMessage.setText(prompt);
@@ -50,13 +53,18 @@ public class LanguageLevelService {
             String userGoals = userService.constructUserGoalsString(user);
             String userPreferences = userService.constructUserPreferencesString(user);
 
-            String topicPrompt = "Do not answer about CEFR level, it is no longer needed. " +
-                    "From now on just chat with the user in English, notice that you should not answer in any other language except the situations when user asks for it explicitly. " +
-                    "The user has the following goals: " + userGoals + ". " +
-                    "The user's preferred topics are: " + userPreferences + ". " +
-                    "Start the conversation by discussing one of these topics." +
-                    "Talk with user as if you were native British citizen";
-            
+            String topicPrompt =
+                    "Do not answer about CEFR level, it is no longer needed. "
+                            + "From now on just chat with the user in English, notice that you should not answer in any other language except the situations when user asks for it explicitly. "
+                            + "The user has the following goals: "
+                            + userGoals
+                            + ". "
+                            + "The user's preferred topics are: "
+                            + userPreferences
+                            + ". "
+                            + "Start the conversation by discussing one of these topics."
+                            + "Talk with user as if you were native British citizen";
+
             Message topicMsg = new Message();
             topicMsg.setRole("system");
             topicMsg.setText(topicPrompt);
@@ -64,7 +72,8 @@ public class LanguageLevelService {
 
             return llm.generateLlmResponse(user);
         }
-        throw new IllegalStateException("evaluate must not be called if user has already been evaluated");
+        throw new IllegalStateException(
+                "evaluate must not be called if user has already been evaluated");
     }
 
     private void questionsAskedPlusOne(UserModel user) {
@@ -98,8 +107,6 @@ public class LanguageLevelService {
 
     private final Integer levelEvalQuestionsNumber = 5;
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private LlmService llm;
+    @Autowired private UserService userService;
+    @Autowired private LlmService llm;
 }
