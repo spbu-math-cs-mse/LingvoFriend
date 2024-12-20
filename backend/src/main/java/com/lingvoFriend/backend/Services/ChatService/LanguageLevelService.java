@@ -116,11 +116,4 @@ public class LanguageLevelService {
         int index = random.nextInt(cefrLevels.length);
         return cefrLevels[index];
     }
-
-    private final Integer levelEvalQuestionsNumber = 5;
-
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private LlmService llm;
 }

@@ -30,9 +30,6 @@ public class LlmReminderService {
         userService.addMessageToUser(user, topicMsg);
     }
 
-    @Autowired
-    private UserService userService;
-
     private String getDialectMessage(String dialect) {
         if (dialect.equals("british")) {
             return "Use British vocabulary (e.g., \"flat\" instead of \"apartment\", \"lorry\" instead of \"truck\") and grammar (e.g., \"present perfect\" for recent actions: \"I’ve just finished\").";
