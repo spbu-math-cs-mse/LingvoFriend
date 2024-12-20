@@ -6,7 +6,6 @@ import com.lingvoFriend.backend.Services.ChatService.dto.UserMessageDto;
 import com.lingvoFriend.backend.Services.ChatService.models.Message;
 import com.lingvoFriend.backend.Services.UserService.UserService;
 
-import com.lingvoFriend.backend.Services.UserService.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,10 +53,8 @@ public class ChatService {
             return languageLevelService.evaluate(user);
         }
 
-        // every 70 user's or assistant's messages we'll cut List<Messages> to 30 last
-        // and send reminder prompt
         if (userService.countMeaningfulMessages(user) > messageRetentionLimit) {
-            userService.clearMessages(user);
+            userService.cutOffMessages(user);
             llmReminderService.sendSystemReminder(user);
         }
 

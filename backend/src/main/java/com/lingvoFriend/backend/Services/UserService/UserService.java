@@ -87,7 +87,7 @@ public class UserService {
         return user.getCefrLevel();
     }
 
-    public void clearMessages(UserModel user) {
+    public void cutOffMessages(UserModel user) {
         int lastMessagesSize = 25;
         List<Message> lastMessages =
                 user.getMessages()
