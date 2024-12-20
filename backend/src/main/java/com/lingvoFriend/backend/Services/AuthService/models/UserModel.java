@@ -43,6 +43,8 @@ public class UserModel {
     private Integer levelEvaluationQuestionsAsked = 0;
     private String cefrLevel;
 
+    private String dialect = "british";
+
     public UserModel(
             String username, String password, List<RoleModel> roles, List<Message> messages) {
         this.username = username;
@@ -60,5 +62,13 @@ public class UserModel {
         response.setEnglishExperience(englishExperience);
         response.setInterests(interests);
         return response;
+    }
+
+    public String getDialect() {
+        return dialect;
+    }
+
+    public void setDialect(String dialect) {
+        this.dialect = dialect;
     }
 }

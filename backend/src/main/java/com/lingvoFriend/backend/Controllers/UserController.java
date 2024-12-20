@@ -26,8 +26,9 @@ class UserController {
             List<String> goals = userService.getGoals(username);
             List<String> interests = userService.getInterests(username);
             String cefrLevel = userService.getCefrLevel(username);
+            String dialect = userService.getDialect(username);
 
-            return ResponseEntity.ok(new UserProfileDto(username, goals, interests, cefrLevel));
+            return ResponseEntity.ok(new UserProfileDto(username, goals, interests, cefrLevel, dialect));
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } catch (Exception e) {

@@ -12,4 +12,5 @@ public class UserProfileDto {
     private List<String> goals;
     private List<String> interests;
     private String cefrLevel;
+    private String dialect = "british";
 }
