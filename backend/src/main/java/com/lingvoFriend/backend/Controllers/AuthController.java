@@ -2,6 +2,7 @@ package com.lingvoFriend.backend.Controllers;
 
 import com.lingvoFriend.backend.Services.AuthService.AuthService;
 import com.lingvoFriend.backend.Services.AuthService.dto.AuthUserDto;
+import com.lingvoFriend.backend.Services.AuthService.dto.TelegramAuthDto;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -29,5 +30,12 @@ public class AuthController {
     public ResponseEntity<?> login(
             @RequestBody AuthUserDto authUserDto, HttpServletResponse response) {
         return authService.login(authUserDto, response);
+    }
+
+    @PostMapping("/telegram-login")
+    public ResponseEntity<?> telegramLogin(
+            @RequestBody TelegramAuthDto telegramAuth,
+            HttpServletResponse response) {
+        return authService.telegramLogin(telegramAuth, response);
     }
 }

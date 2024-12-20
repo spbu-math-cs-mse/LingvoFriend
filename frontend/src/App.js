@@ -13,6 +13,7 @@ import Chat from "./components/pages/chat/Chat";
 import Store from "./components/pages/store/Store";
 import Questionnaire from "./components/pages/questionnaire/Questionnaire";
 import useAuth from "./components/authForm/useAuth";
+import TelegramAuthForm from "./components/authForm/TelegramAuthForm";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 
@@ -89,6 +90,14 @@ function App() {
                         <PrivateRoute>
                             <Store />
                         </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/telegram-auth"
+                    element={
+                        <PublicRoute>
+                            <TelegramAuthForm />
+                        </PublicRoute>
                     }
                 />
             </Routes>
