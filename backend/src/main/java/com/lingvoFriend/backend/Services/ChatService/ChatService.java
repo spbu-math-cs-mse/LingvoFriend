@@ -1,8 +1,10 @@
 package com.lingvoFriend.backend.Services.ChatService;
 
+import com.lingvoFriend.backend.Security.JwtGenerator;
 import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
 import com.lingvoFriend.backend.Services.ChatService.dto.UserMessageDto;
 import com.lingvoFriend.backend.Services.ChatService.models.Message;
+import com.lingvoFriend.backend.Services.UserService.UserService;
 
 import com.lingvoFriend.backend.Services.UserService.UserService;
 import org.slf4j.Logger;
@@ -21,12 +23,14 @@ public class ChatService {
     @Autowired private LanguageLevelService languageLevelService;
     @Autowired private WordsReminderService wordsReminderService;
     @Autowired private LlmReminderService llmReminderService;
+    @Autowired private JwtGenerator jwtGenerator;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Integer messageRetentionLimit = 50;
 
-    public String chat(UserMessageDto userMessageDto) {
-        UserModel user = userService.findOrThrow(userMessageDto.getUsername());
+    public String chat(String token, UserMessageDto userMessageDto) {
+        String username = jwtGenerator.getUsernameFromToken(token);
+        UserModel user = userService.findOrThrow(username);
         userService.addMessageToUser(user, userMessageDto.getMessage());
 
         if (userMessageDto.getMessage().isSystem()) return "successfully added system message";

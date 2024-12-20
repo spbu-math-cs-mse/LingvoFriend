@@ -3,7 +3,12 @@ package com.lingvoFriend.backend.Services.ChatService;
 import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
 import com.lingvoFriend.backend.Services.ChatService.models.Message;
 import com.lingvoFriend.backend.Services.UserService.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
@@ -12,6 +17,7 @@ import java.util.Random;
 public class LanguageLevelService {
     @Autowired private UserService userService;
     @Autowired private LlmService llm;
+    @Autowired private MongoTemplate mongoTemplate;
 
     private final Integer levelEvalQuestionsNumber = 5;
 
@@ -82,20 +88,25 @@ public class LanguageLevelService {
     }
 
     private void questionsAskedPlusOne(UserModel user) {
-        user.setLevelEvaluationQuestionsAsked(user.getLevelEvaluationQuestionsAsked() + 1);
-        user.setCefrLevel(null);
-        userService.getUserRepository().save(user);
+        Query query = new Query(Criteria.where("_id").is(user.getId()));
+        Update update =
+                new Update()
+                        .set(
+                                "levelEvaluationQuestionsAsked",
+                                user.getLevelEvaluationQuestionsAsked() + 1);
+        mongoTemplate.updateFirst(query, update, UserModel.class);
     }
 
     private void startEvaluation(UserModel user) {
-        user.setLevelEvaluationQuestionsAsked(1);
-        user.setCefrLevel(null);
-        userService.getUserRepository().save(user);
+        Query query = new Query(Criteria.where("_id").is(user.getId()));
+        Update update = new Update().set("levelEvaluationQuestionsAsked", 1);
+        mongoTemplate.updateFirst(query, update, UserModel.class);
     }
 
     private void setCefrLevel(UserModel user, String level) {
-        user.setCefrLevel(level);
-        userService.getUserRepository().save(user);
+        Query query = new Query(Criteria.where("_id").is(user.getId()));
+        Update update = new Update().set("cefrLevel", level);
+        mongoTemplate.updateFirst(query, update, UserModel.class);
     }
 
     private String extractCEFRLevel(String text) {

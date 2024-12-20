@@ -4,6 +4,7 @@ import com.lingvoFriend.backend.Services.AuthService.AuthService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+
 import lombok.AllArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
@@ -19,12 +20,6 @@ public class JwtController {
     @GetMapping("/validate")
     public ResponseEntity<String> validateToken(@CookieValue("__Host-auth-token") String token) {
         return authService.validateToken(token);
-    }
-
-    @GetMapping("/username")
-    public ResponseEntity<String> getUsernameFromToken(
-            @CookieValue("__Host-auth-token") String token) {
-        return authService.getUsernameFromToken(token);
     }
 
     @GetMapping("/clear")

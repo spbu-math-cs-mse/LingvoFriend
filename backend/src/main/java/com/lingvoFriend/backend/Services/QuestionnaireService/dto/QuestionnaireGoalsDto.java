@@ -6,6 +6,5 @@ import java.util.List;
 
 @Data
 public class QuestionnaireGoalsDto {
-    private String username;
     private List<String> goals;
 }
