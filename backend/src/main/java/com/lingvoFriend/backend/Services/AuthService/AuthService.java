@@ -97,6 +97,43 @@ public class AuthService {
         }
     }
 
+    public ResponseEntity<?> telegramLogin(TelegramAuthDto telegramAuth, HttpServletResponse response) {
+        if (!telegramAuthService.checkTelegramAuthorization(telegramAuth)) {
+            return new ResponseEntity<>("Invalid authorization", HttpStatus.UNAUTHORIZED);
+        }
+
+        String username = "telegram_" + telegramAuth.getId();
+
+        // Create user if doesn't exist
+        if (!userRepository.existsByUsername(username)) {
+            UserModel userModel = new UserModel(
+                    username,
+                    passwordEncoder.encode(telegramAuth.getHash()), // Use hash as password
+                    new ArrayList<>(List.of(roleRepository.findByRoleName("USER"))),
+                    new ArrayList<>()
+            );
+            userRepository.save(userModel);
+        }
+
+        // Create authentication token
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(username, telegramAuth.getHash())
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String token = jwtGenerator.generateToken(authentication);
+
+        Cookie cookie = new Cookie("__Host-auth-token", token);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge((int) JwtGenerator.JWT_EXPIRATION_TIME.toSeconds());
+
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok(new AuthResponseDto(token, null));
+    }
+
     public ResponseEntity<String> validateToken(String token) {
         if (StringUtils.hasText(token) && jwtGenerator.validateToken(token)) {
             return ResponseEntity.ok().body("Token is valid");
