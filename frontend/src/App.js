@@ -48,22 +48,8 @@ function App() {
                         </PublicRoute>
                     }
                 />
-                <Route
-                    path="/login"
-                    element={
-                        <PublicRoute>
-                            <LoginForm />
-                        </PublicRoute>
-                    }
-                />
-                <Route
-                    path="/register"
-                    element={
-                        <PublicRoute>
-                            <RegisterForm />
-                        </PublicRoute>
-                    }
-                />
+                <Route path="/login" element={<LoginForm />} />
+                <Route path="/register" element={<RegisterForm />} />
 
                 <Route
                     path="/questionnaire"

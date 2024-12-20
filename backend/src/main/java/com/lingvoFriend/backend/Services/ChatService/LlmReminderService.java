@@ -2,6 +2,7 @@ package com.lingvoFriend.backend.Services.ChatService;
 
 import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
 import com.lingvoFriend.backend.Services.ChatService.models.Message;
+import com.lingvoFriend.backend.Services.UserService.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,6 @@ public class LlmReminderService {
         Message topicMsg = new Message();
         topicMsg.setRole("system");
         topicMsg.setText(prompt);
-
         userService.addMessageToUser(user, topicMsg);
     }
 }
