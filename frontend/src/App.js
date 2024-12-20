@@ -20,67 +20,43 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
-    const [isMiniApp, setIsMiniApp] = useState(false);
-    const [userInfo, setUserInfo] = useState({ username: "", userId: "" });
-
     useEffect(() => {
         const checkIsMiniApp = async () => {
             if (window.TelegramWebviewProxy) {
-                setIsMiniApp(true);
-
-                // const tgData = window.Telegram.WebApp.initDataUnsafe;
-                // const username = tgData.user?.username;
-                // const userId = tgData.user?.id;
-
                 const tgData = window.Telegram.WebApp.initDataUnsafe;
-                if (tgData && tgData.user) {
-                    const { username, id } = tgData.user;
-                    setUserInfo({
-                        username: username,
-                        userId: id,
-                    });
-                }
+                const username = tgData.user?.username;
+                const userId = tgData.user?.id;
 
                 const serverUrl = process.env.REACT_APP_SERVER_URL || "";
-                // try {
-                //     const response = await fetch(
-                //         `${serverUrl}/api/auth/login`,
-                //         {
-                //             method: "POST",
-                //             headers: {
-                //                 "Content-Type": "application/json",
-                //             },
-                //             credentials: "include",
-                //             body: JSON.stringify({
-                //                 username: userInfo.username,
-                //                 password: userInfo.userId,
-                //             }),
-                //         }
-                //     );
+                try {
+                    await fetch(`${serverUrl}/api/auth/register`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        credentials: "include",
+                        body: JSON.stringify({
+                            username: username,
+                            password: userId,
+                        }),
+                    });
 
-                //     if (!response.ok) {
-                //         const errorData = await response.json();
-                //         if (
-                //             response.status === 400 &&
-                //             errorData.errorMessage === "WRONG_USERNAME"
-                //         ) {
-                //             toast.error("Неправильное имя пользователя");
-                //         } else if (
-                //             response.status === 401 &&
-                //             errorData.errorMessage === "WRONG_PASSWORD"
-                //         ) {
-                //             toast.error("Неправильный пароль");
-                //         } else {
-                //             toast.error(
-                //                 "Произошла ошибка. Пожалуйста, попробуйте снова."
-                //             );
-                //         }
-                //     }
-                // } catch (error) {
-                //     toast.error(
-                //         "Что-то пошло не так. Проверьте соединение с интернетом."
-                //     );
-                // }
+                    await fetch(`${serverUrl}/api/auth/login`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        credentials: "include",
+                        body: JSON.stringify({
+                            username: username,
+                            password: userId,
+                        }),
+                    });
+                } catch (error) {
+                    toast.error(
+                        "Что-то пошло не так. Проверьте соединение с интернетом."
+                    );
+                }
             }
         };
 
@@ -109,17 +85,6 @@ function App() {
 
     return (
         <Router>
-            <div>
-                {isMiniApp ? (
-                    <h1>
-                        Hey, it's Mini App! <br />
-                        Username: {userInfo.username} <br />
-                        User ID: {userInfo.userId}
-                    </h1>
-                ) : (
-                    <h1>Hey, it's Browser Version!</h1>
-                )}
-            </div>
             <Routes>
                 <Route
                     path="/"
