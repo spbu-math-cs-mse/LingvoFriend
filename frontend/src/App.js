@@ -31,17 +31,25 @@ function App() {
 
                 const serverUrl = process.env.REACT_APP_SERVER_URL || "";
                 try {
-                    // await fetch(`${serverUrl}/api/auth/register`, {
-                    //     method: "POST",
-                    //     headers: {
-                    //         "Content-Type": "application/json",
-                    //     },
-                    //     credentials: "include",
-                    //     body: JSON.stringify({
-                    //         username: username,
-                    //         password: userId,
-                    //     }),
-                    // });
+                    const responseRegister = await fetch(
+                        `${serverUrl}/api/auth/register`,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            credentials: "include",
+                            body: JSON.stringify({
+                                username: username,
+                                password: userId,
+                            }),
+                        }
+                    );
+
+                    if (responseRegister.ok) {
+                        window.location.href = "/questionnaire";
+                        return;
+                    }
 
                     await fetch(`${serverUrl}/api/auth/login`, {
                         method: "POST",
@@ -50,8 +58,8 @@ function App() {
                         },
                         credentials: "include",
                         body: JSON.stringify({
-                            username: "who",
-                            password: "pass",
+                            username: username,
+                            password: userId,
                         }),
                     });
                 } catch (error) {
