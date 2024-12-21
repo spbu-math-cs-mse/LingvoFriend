@@ -29,7 +29,7 @@ public class WordsReminderService {
 
         // when user clicks on unknownWord for the first time
         // it'll be shown not earlier than 30 minutes from now as the first reminderStep
-        unknownWord.setTime(unknownWord.getTime().plus(Duration.ofMinutes(30)));
+        unknownWord.setTime(unknownWord.getTime().plus(Duration.ofSeconds(20)));
         unknownWord.setStep(1);
 
         userService.addUnknownWordToUser(user, unknownWord);
