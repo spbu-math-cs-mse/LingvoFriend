@@ -12,10 +12,6 @@ const DialogWord = ({ segment, index }) => {
     const tooltipId = `tooltip-${index}-${segment}`;
     const serverUrl = process.env.REACT_APP_SERVER_URL || "";
 
-    useEffect(() => {
-        ReactTooltip.rebuild();
-    }, [translation, isLoadingWord]);
-
     if (segment.trim() === "" || /[.,!?;:()]/.test(segment)) {
         return segment;
     }
@@ -78,7 +74,7 @@ const DialogWord = ({ segment, index }) => {
                         ? "Loading..."
                         : translation
                         ? translation
-                        : "Text"
+                        : "Translate"
                 }
             />
         </span>
