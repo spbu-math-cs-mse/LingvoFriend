@@ -3,6 +3,7 @@ package com.lingvoFriend.backend.Services.ChatService;
 import com.lingvoFriend.backend.Security.JwtGenerator;
 import com.lingvoFriend.backend.Services.AuthService.models.UserModel;
 import com.lingvoFriend.backend.Services.ChatService.dto.UserMessageDto;
+import com.lingvoFriend.backend.Services.ChatService.dto.WordsReminderDto;
 import com.lingvoFriend.backend.Services.ChatService.models.Message;
 import com.lingvoFriend.backend.Services.UserService.UserService;
 
@@ -30,7 +31,13 @@ public class ChatService {
     public String chat(String token, UserMessageDto userMessageDto) {
         String username = jwtGenerator.getUsernameFromToken(token);
         UserModel user = userService.findOrThrow(username);
+
+        if (userMessageDto.getMessage().getText().startsWith("/add")) {
+            return manualUnknownWordsAddition(token, user, userMessageDto);
+        }
+
         userService.addMessageToUser(user, userMessageDto.getMessage());
+        
 
         if (userMessageDto.getMessage().isSystem()) return "successfully added system message";
 
@@ -67,5 +74,18 @@ public class ChatService {
         }
 
         return llmService.generateLlmResponse(user);
+    }
+
+    private String manualUnknownWordsAddition(String token, UserModel user, UserMessageDto userMessageDto) {
+        String messageText = userMessageDto.getMessage().getText().replaceFirst("^/add\\s*", "");
+        String[] words = messageText.split("[,\\s]+");
+
+        for (String word : words) {
+            WordsReminderDto wordsReminderDto = new WordsReminderDto();
+            wordsReminderDto.setWord(word.trim());
+            wordsReminderService.saveUnknownWord(token, wordsReminderDto);
+        }
+    
+        return "Unknown words have been added.";
     }
 }
