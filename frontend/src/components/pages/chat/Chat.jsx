@@ -10,8 +10,11 @@ const DialogWord = ({ segment, index }) => {
     const [translation, setTranslation] = useState(null);
     const [isLoadingWord, setIsLoadingWord] = useState(null);
     const tooltipId = `tooltip-${index}-${segment}`;
-    const [open, setOpen] = React.useState(false);
     const serverUrl = process.env.REACT_APP_SERVER_URL || "";
+
+    useEffect(() => {
+        ReactTooltip.rebuild();
+    }, [translation, isLoadingWord]);
 
     if (segment.trim() === "" || /[.,!?;:()]/.test(segment)) {
         return segment;
@@ -63,24 +66,21 @@ const DialogWord = ({ segment, index }) => {
             onClick={() => handleWordClick(segment)}
             data-tip
             data-for={tooltipId}
-            onMouseEnter={() => !open && setOpen(true)}
         >
             {segment}
-            {open && (
-                <ReactTooltip
-                    id={tooltipId}
-                    place="top"
-                    effect="solid"
-                    className="tooltip-translation"
-                    open={open}
-                >
-                    {isLoadingWord
+            <ReactTooltip
+                id={tooltipId}
+                place="top"
+                effect="solid"
+                className="tooltip-translation"
+                getContent={() =>
+                    isLoadingWord
                         ? "Loading..."
                         : translation
                         ? translation
-                        : "Нажмите на слово, чтобы перевести"}
-                </ReactTooltip>
-            )}
+                        : "Text"
+                }
+            />
         </span>
     );
 };
