@@ -55,6 +55,10 @@ public class UserService {
             user.getUnknownWords().remove(user.getUnknownWords().last());
         }
 
+        updateUnknownWords(user);
+    }
+
+    public void updateUnknownWords(UserModel user) {
         Query query = new Query(Criteria.where("_id").is(user.getId()));
         Update update = new Update().set("unknownWords", user.getUnknownWords());
         mongoTemplate.updateFirst(query, update, UserModel.class);

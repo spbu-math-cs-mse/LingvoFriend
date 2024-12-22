@@ -78,7 +78,7 @@ const DialogWord = ({ segment, index }) => {
                         ? "Loading..."
                         : translation
                         ? translation
-                        : "Нажмите на слово, чтобы перевести"}
+                        : "Translate"}
                 </ReactTooltip>
             )}
         </span>

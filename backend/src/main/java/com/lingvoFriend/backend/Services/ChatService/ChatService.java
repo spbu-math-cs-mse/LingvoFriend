@@ -37,7 +37,6 @@ public class ChatService {
         }
 
         userService.addMessageToUser(user, userMessageDto.getMessage());
-        
 
         if (userMessageDto.getMessage().isSystem()) return "successfully added system message";
 
@@ -71,12 +70,14 @@ public class ChatService {
                 && user.getUnknownWords().first().getTime().isBefore(Instant.now())) {
             Message wordsReminderPrompt = wordsReminderService.addWordsReminderPrompt(user);
             userService.addMessageToUser(user, wordsReminderPrompt);
+            userService.updateUnknownWords(user);
         }
 
         return llmService.generateLlmResponse(user);
     }
 
-    private String manualUnknownWordsAddition(String token, UserModel user, UserMessageDto userMessageDto) {
+    private String manualUnknownWordsAddition(
+            String token, UserModel user, UserMessageDto userMessageDto) {
         String messageText = userMessageDto.getMessage().getText().replaceFirst("^/add\\s*", "");
         String[] words = messageText.split("[,\\s]+");
 
@@ -85,7 +86,7 @@ public class ChatService {
             wordsReminderDto.setWord(word.trim());
             wordsReminderService.saveUnknownWord(token, wordsReminderDto);
         }
-    
+
         return "Unknown words have been added.";
     }
 }
