@@ -8,9 +8,9 @@ import "./chat.css";
 
 const DialogWord = ({ segment, index }) => {
     const [translation, setTranslation] = useState(null);
-    const [isLoadingWord, setIsLoadingWord] = useState(false);
-    const [hovered, setHovered] = useState(false);
+    const [isLoadingWord, setIsLoadingWord] = useState(null);
     const tooltipId = `tooltip-${index}-${segment}`;
+    const [open, setOpen] = React.useState(false);
     const serverUrl = process.env.REACT_APP_SERVER_URL || "";
 
     if (segment.trim() === "" || /[.,!?;:()]/.test(segment)) {
@@ -19,8 +19,8 @@ const DialogWord = ({ segment, index }) => {
 
     const handleWordClick = async (word) => {
         if (translation) return;
-
         setIsLoadingWord(true);
+
         try {
             const response = await axios.post(
                 "https://api-free.deepl.com/v2/translate",
@@ -35,17 +35,19 @@ const DialogWord = ({ segment, index }) => {
                 }
             );
 
+            const requestBody = {
+                word: word,
+            };
+
+            await axios.post(`${serverUrl}/api/saveUnknownWord`, requestBody, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                withCredentials: true,
+            });
+
             const translatedText = response.data.translations[0].text;
             setTranslation(translatedText);
-
-            await axios.post(
-                `${serverUrl}/api/saveUnknownWord`,
-                { word },
-                {
-                    headers: { "Content-Type": "application/json" },
-                    withCredentials: true,
-                }
-            );
         } catch (error) {
             console.error("Translation error:", error);
             setTranslation("Translation unavailable");
@@ -58,23 +60,27 @@ const DialogWord = ({ segment, index }) => {
         <span
             key={index}
             className="clickable-word"
+            onClick={() => handleWordClick(segment)}
             data-tip
             data-for={tooltipId}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-            onClick={() => handleWordClick(segment)}
+            onMouseEnter={() => !open && setOpen(true)}
         >
             {segment}
-
-            <ReactTooltip id={tooltipId} place="top" effect="solid">
-                {isLoadingWord
-                    ? "Loading..."
-                    : translation
-                    ? translation
-                    : hovered
-                    ? "Translate"
-                    : ""}
-            </ReactTooltip>
+            {open && (
+                <ReactTooltip
+                    id={tooltipId}
+                    place="top"
+                    effect="solid"
+                    className="tooltip-translation"
+                    open={open}
+                >
+                    {isLoadingWord
+                        ? "Loading..."
+                        : translation
+                        ? translation
+                        : "Translate"}
+                </ReactTooltip>
+            )}
         </span>
     );
 };
